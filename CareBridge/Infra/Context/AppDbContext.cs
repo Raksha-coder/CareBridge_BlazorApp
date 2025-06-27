@@ -18,5 +18,6 @@ namespace Infra.Context
         public DbSet<Country> Country { get; set; }
         public DbSet<State> State { get; set; }
         public DbSet<Role> Role { get; set; }
+        public DbSet<Otp> Otp { get; set; }
     }
 }

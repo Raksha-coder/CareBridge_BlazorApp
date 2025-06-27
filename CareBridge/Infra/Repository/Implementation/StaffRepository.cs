@@ -8,24 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PasswordGenerator;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Infra.Repository.Implementation
 {
-    public class PatientRepository : IPatientRepository
+    public class StaffRepository : IStaffRepository
     {
+
         private readonly AppDbContext _context;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
-        public PatientRepository(AppDbContext context, IEmailService emailService, IConfiguration configuration)
+        public StaffRepository(AppDbContext context, IEmailService emailService, IConfiguration configuration)
         {
             _context = context;
             _emailService = emailService;
@@ -34,7 +30,7 @@ namespace Infra.Repository.Implementation
 
         public async Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword)
         {
-            var checkUser = await _context.Patient.Where(a => a.Email == forgotPassword.Email && a.IsActive == true && a.IsDeleted == false).FirstOrDefaultAsync();
+            var checkUser = await _context.Staff.Where(a => a.Email == forgotPassword.Email && a.IsActive == true && a.IsDeleted == false).FirstOrDefaultAsync();
             if (checkUser == null)
             {
                 throw new Exception("User not found.");
@@ -45,21 +41,20 @@ namespace Infra.Repository.Implementation
             password = $"{password}#";
             var encryptedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             checkUser.Password = encryptedPassword;
-            _context.Patient.Update(checkUser);
+            _context.Staff.Update(checkUser);
             _context.SaveChanges();
             await _emailService.SendEmailAsync(checkUser.Email, "Password Reset", $"Your new password is: {password}");
             return new JsonModel(200, "Password Reset Successfully", null);
         }
 
-        public Task<JsonModel> GetPatientByIdAsync(int patientId)
+        public Task<JsonModel> GetStaffByIdAsync(int staffId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<JsonModel> LoginPatientAsync(LoginDto loginDto)
+        public async Task<JsonModel> LoginStaffAsync(LoginDto loginDto)
         {
-            var checkUser = await _context.Patient.FirstOrDefaultAsync(a => a.Username == loginDto.Username && a.IsActive == true && a.IsDeleted == false);
-
+            var checkUser = await _context.Staff.FirstOrDefaultAsync(a => a.Username == loginDto.Username && a.IsActive == true && a.IsDeleted == false);
             if (checkUser == null)
             {
                 throw new Exception("User not found.");
@@ -70,7 +65,6 @@ namespace Infra.Repository.Implementation
                 throw new Exception("Invalid username or password.");
             }
             var otp = new Random().Next(100000, 999999).ToString();
-
             var existingOtps = await _context.Otp
             .Where(o => o.Username.ToLower() == checkUser.Username.ToLower())
             .ToListAsync();
@@ -78,7 +72,6 @@ namespace Infra.Repository.Implementation
             {
                 _context.Otp.RemoveRange(existingOtps);
             }
-
             _context.Otp.Add(new Otp
             {
                 Email = checkUser.Email,
@@ -89,7 +82,6 @@ namespace Infra.Repository.Implementation
             await _context.SaveChangesAsync();
             //await _emailService.SendEmailAsync(checkUser.Email, "OTP for login", otp);
             string subject = "Your OTP Verification Code";
-
             string body = $@"
     <html>
         <body>
@@ -104,68 +96,75 @@ namespace Infra.Repository.Implementation
     </html>";
 
             await _emailService.SendEmailAsync(checkUser.Email, subject, body);
-
             return new JsonModel(200, "OTP Sent Successfully", null);
-
         }
 
-        public async Task<JsonModel> RegisterPatientAsync(PatientRegisterDto registerDto)
+        public async Task<JsonModel> RegisterStaffAsync(StaffRegistrationDto registerDto)
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            var checkUserExits = await _context.Patient.Where(x => x.Email == registerDto.Email).FirstOrDefaultAsync();
+            var checkUserExits = await _context.Staff.Where(x => x.Email == registerDto.Email).FirstOrDefaultAsync();
 
             if (checkUserExits != null)
             {
-                return new JsonModel(400, "Patient Already Exits", null);
+                return new JsonModel(400, "Staff Already Exits", null);
             }
 
             string formattedDOB = registerDto.DOB.ToString("ddMMyy");
             var userName = $"MV_{textInfo.ToTitleCase(registerDto.FirstName)}{registerDto.LastName.ToUpper()[0]}{formattedDOB}";
-
             var passwordGenerator = new Password(true, true, true, true, 13);
             string password = passwordGenerator.Next();
             password = password.Replace("\\", "");
             password = $"{password}#";
             var encryptedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-            var addPatient = new Domain.DataModel.Entity.Patient
+            decimal visitingCharge = 0;
+            if (registerDto.RoleId == 1)
+            {
+                visitingCharge = registerDto.VisitingCharge;
+            }
+            else
+            {
+                visitingCharge = 0;
+            }
+            var addStaff = new Staff
             {
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
                 Username = userName,
                 Password = encryptedPassword,
-                Mobile = registerDto.Mobile,
-                BloodGroup = registerDto.BloodGroup,
+                PhoneNo = registerDto.PhoneNo,
                 Gender = registerDto.Gender,
-                RoleId = 3,
+                RoleId = registerDto.RoleId,
                 Address = registerDto.Address,
-                PinCode = registerDto.PinCode,
                 City = registerDto.City,
                 StateId = registerDto.StateId,
                 CountryId = registerDto.CountryId,
-                CreatedBy = "Admin",
+                Designation = registerDto.Designation,
+                Department = registerDto.Department,
+                VisitingCharge = visitingCharge,
+                JoiningDate = registerDto.JoiningDate,
+                CreatedBy = "Doctor",
                 CreatedDate = DateTime.Now,
                 IsActive = true,
                 IsDeleted = false
             };
-            await _context.Patient.AddAsync(addPatient);
+            await _context.Staff.AddAsync(addStaff);
             await _context.SaveChangesAsync();
 
             string subject = "Welcome to Blazor Sample App!";
-
             string body = $@"
     <html>
         <body style='font-family: Arial, sans-serif;'>
-            <h2 style='color:#4CAF50;'>Welcome, {addPatient.FirstName}!</h2>
+            <h2 style='color:#4CAF50;'>Welcome, {addStaff.FirstName}!</h2>
             <p>Thank you for registering with <strong>Blazor Sample App</strong>.</p>
 
             <p>Your registration details:</p>
             <ul>
-                <li><strong>Name:</strong> {addPatient.FirstName} {addPatient.LastName}</li>
-                <li><strong>Email:</strong> {addPatient.Email}</li>
+                <li><strong>Name:</strong> {addStaff.FirstName} {addStaff.LastName}</li>
+                <li><strong>Email:</strong> {addStaff.Email}</li>
                 <li><strong>Registered On:</strong> {DateTime.Now.ToString("dd MMM yyyy")}</li>
-                <li><strong>Username:</strong> {addPatient.Username}</li>
+                <li><strong>Username:</strong> {addStaff.Username}</li>
                 <li><strong>Password:</strong> {password}</li>
 
             </ul>
@@ -176,9 +175,8 @@ namespace Infra.Repository.Implementation
         </body>
     </html>";
 
-            await _emailService.SendEmailAsync(addPatient.Email, subject, body);
-
-            return new JsonModel(200, "Patient Registered Successfully", null);
+            await _emailService.SendEmailAsync(addStaff.Email, subject, body);
+            return new JsonModel(200, "Staff Registered Successfully", null);
         }
 
         public async Task<JsonModel> VerifyOtpAsync(VerifyOtpDto verifyOtpDto)

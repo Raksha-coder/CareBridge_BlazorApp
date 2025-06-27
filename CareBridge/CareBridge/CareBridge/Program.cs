@@ -1,12 +1,18 @@
-using CareBridge.Client.Pages;
+using CareBridge.Client;
 using CareBridge.Components;
+using Infra;
+using MatBlazor;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var configuration = builder.Configuration;
 // Add services to the container.
+builder.Services.AddMatBlazor();
+
+builder.Services.AddInfra(configuration);
+
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
-
+builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,7 +32,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()
+app.MapControllers();
+app.MapRazorComponents<CareBridge.Components.App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CareBridge.Client._Imports).Assembly);
 

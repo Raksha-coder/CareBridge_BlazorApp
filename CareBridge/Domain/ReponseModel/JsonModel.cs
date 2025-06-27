@@ -8,11 +8,11 @@ namespace Domain.ReponseModel
 {
     public class JsonModel
     {
-        public string Status { get; set; }
+        public int Status { get; set; }
         public string Message { get; set; }
         public object Data { get; set; }
 
-        public JsonModel(string status, string message, object data)
+        public JsonModel(int status, string message, object data)
         {
             Status = status;
             Message = message;

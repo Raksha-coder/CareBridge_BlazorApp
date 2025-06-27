@@ -13,15 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{13BEC1B5-A193-4F87-A673-5A12BC6C5580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Core", "App.Core\App.Core.csproj", "{24AC023E-9487-414A-8EE8-9494F4BE48FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.Core", "App.Core\App.Core.csproj", "{24AC023E-9487-414A-8EE8-9494F4BE48FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{C156B734-B520-4A0A-82AD-47ECD391524E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{C156B734-B520-4A0A-82AD-47ECD391524E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "Infra\Infra.csproj", "{50687877-E2BB-4C36-93A4-70B9D61E2239}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infra", "Infra\Infra.csproj", "{50687877-E2BB-4C36-93A4-70B9D61E2239}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareBridge", "CareBridge\CareBridge\CareBridge.csproj", "{EE1BED63-C5C9-42FC-AE85-41BEF04D00F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CareBridge", "CareBridge\CareBridge\CareBridge.csproj", "{EE1BED63-C5C9-42FC-AE85-41BEF04D00F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareBridge.Client", "CareBridge\CareBridge.Client\CareBridge.Client.csproj", "{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CareBridge.Client", "CareBridge\CareBridge.Client\CareBridge.Client.csproj", "{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

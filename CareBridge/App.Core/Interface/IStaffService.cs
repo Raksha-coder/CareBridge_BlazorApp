@@ -10,9 +10,10 @@ namespace App.Core.Interface
 {
     public interface IStaffService
     {
-        Task<JsonModel> RegisterStaffAsync(StaffRegistrationDto registerDto);
-        Task<JsonModel> LoginStaffAsync(LoginDto loginDto);
-        Task<JsonModel> GetStaffByIdAsync(int staffId);
-        Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
+        public Task<JsonModel> RegisterStaffAsync(StaffRegistrationDto registerDto);
+        public Task<JsonModel> VerifyOtpAsync(VerifyOtpDto verifyOtpDto);
+        public Task<JsonModel> LoginStaffAsync(LoginDto loginDto);
+        public Task<JsonModel> GetStaffByIdAsync(int staffId);
+        public Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
     }
 }

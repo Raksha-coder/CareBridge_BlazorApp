@@ -48,5 +48,14 @@ namespace App.Core.Dtos
         public DateTime JoiningDate { get; set; }
 
         public int RoleId { get; set; } // Staff/Doctor role reference
+
+        [Required, DataType(DataType.Date)]
+        public DateTime DOB { get; set; }
+        public int StateId { get; set; }
+
+        [MaxLength(100)]
+        public string City { get; set; }
+
+        public int CountryId { get; set; }
     }
 }

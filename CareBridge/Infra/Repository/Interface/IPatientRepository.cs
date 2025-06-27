@@ -11,6 +11,7 @@ namespace Infra.Repository.Interface
     public interface IPatientRepository
     {
         Task<JsonModel> RegisterPatientAsync(PatientRegisterDto registerDto);
+        Task<JsonModel> VerifyOtpAsync(VerifyOtpDto verifyOtpDto);
         Task<JsonModel> LoginPatientAsync(LoginDto loginDto);
         Task<JsonModel> GetPatientByIdAsync(int patientId);
         Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MatBlazor" Version="2.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
   </ItemGroup>
@@ -16,6 +17,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\App.Core\App.Core.csproj" />
     <ProjectReference Include="..\..\Infra\Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authentication\" />
+    <Folder Include="Staff\" />
   </ItemGroup>
 
 </Project>

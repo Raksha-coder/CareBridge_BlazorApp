@@ -27,6 +27,8 @@ namespace Domain.DataModel.Entity
 
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
+        [Required, DataType(DataType.Date)]
+        public DateTime DOB { get; set; }
 
         [Required, Phone]
         public string PhoneNo { get; set; }
@@ -50,5 +52,12 @@ namespace Domain.DataModel.Entity
         public DateTime JoiningDate { get; set; }
 
         public int RoleId { get; set; } // Staff/Doctor role reference
+
+        public int StateId { get; set; }
+
+        [MaxLength(100)]
+        public string City { get; set; }
+
+        public int CountryId { get; set; }
     }
 }

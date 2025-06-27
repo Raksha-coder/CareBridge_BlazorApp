@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.DataModel.Entity
+namespace App.Core.Dtos
 {
-    public class Country
+    public class CountryDto
     {
         public int CountryId { get; set; }
         public string ShortName { get; set; } = string.Empty;
