@@ -123,6 +123,7 @@
 
     private List<State> States { get; set; }
 
+
     [Parameter]
     public JsonModel jsonModel { get; set; }
 
@@ -133,6 +134,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Roles = await Http.GetFromJsonAsync<List<Role>>("api/Role/GetAllRoles");
         Countries = await Http.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries");
         States = await Http.GetFromJsonAsync<List<State>>("api/State/GetAllStates");
     }

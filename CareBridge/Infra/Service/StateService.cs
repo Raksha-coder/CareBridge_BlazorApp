@@ -13,6 +13,12 @@ namespace Infra.Service
     public class StateService : IStateService
     {
         private readonly IStateRepository _stateRepository;
+
+        public StateService(IStateRepository stateRepository)
+        {
+            _stateRepository = stateRepository;
+        }
+
         public Task<List<State>> GetAllStatesAsync()
         {
             return _stateRepository.GetAllStatesAsync();

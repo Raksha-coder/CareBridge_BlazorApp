@@ -1,116 +1,9 @@
-﻿@layout RegisterLayout
-@page "/staff/registration"
-@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
-
-<PageTitle>Register</PageTitle>
-
-<h1>Register Form </h1>
-
-<EditForm Model="@registerDto" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <div class="row mt-3">
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.FirstName" Outlined="true" Label="First Name"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.FirstName)" />
-        </div>
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.LastName" Outlined="true" Label="Last Name"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.LastName)" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.Email" Outlined="true" Label="Enter Email"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.Email)" />
-        </div>
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.Mobile" Outlined="true" Label="Enter Mobile"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.Mobile)" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-6">
-            <MatDatePicker TValue="DateTime" @bind-Value="@registerDto.DOB" Outlined="true" Label="Enter Date of Birth"></MatDatePicker>
-            <ValidationMessage For="@(() => registerDto.DOB)" />
-        </div>
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.BloodGroup" Outlined="true" Label="Enter Blood Group"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.BloodGroup)" />
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.Gender" Outlined="true" Label="Enter Gender"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.Gender)" />
-        </div>
-        <div class="col-6">
-            @if (States != null && States.Any())
-            {
-                <MatSelect @bind-Value="@registerDto.CountryId" Label="Country" Outlined="true">
-                    @foreach (var item in Countries)
-                    {
-                        <MatOption Value="@item.CountryId"> @item.Name</MatOption>
-                    }
-                </MatSelect>
-                <ValidationMessage For="@(() => registerDto.CountryId)" />
-            }
-            else
-            {
-                <p>Loading Country...</p>
-            }
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-6">
-            @if (States != null)
-            {
-                <MatSelect @bind-Value="@registerDto.StateId" Label="State" Outlined="true">
-                    @foreach (var item in States)
-                    {
-                        <MatOption Value="@item.StateId">@item.StateName</MatOption>
-                    }
-                </MatSelect>
-                <ValidationMessage For="@(() => registerDto.StateId)" />
-            }
-            else
-            {
-                <p>Loading states...</p>
-            }
-        </div>
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.City" Outlined="true" Label="Enter  City"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.City)" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.PinCode" Outlined="true" Label="Enter PinCode"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.PinCode)" />
-        </div>
-        <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.Address" Outlined="true" Label="Enter  Address"></MatTextField>
-            <ValidationMessage For="@(() => registerDto.Address)" />
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-6">
-            <MatButton Type="submit" Raised="true">Register </MatButton>
-        </div>
-    </div>
-    <div>
-        <MatButtonLink Href="/">If You Already Have An Account ?</MatButtonLink>
-    </div>
-
-    <ValidationSummary />
-</EditForm>
-
+﻿@page "/staffregistration"
+@layout RegisterLayout
+<h3>StaffRegistration</h3>
 
 @code {
+
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
@@ -120,7 +13,6 @@
 
     private List<State> States { get; set; }
 
-    private List<Role>> Roles { get; set; }
 
     [Parameter]
     public JsonModel jsonModel { get; set; }
@@ -132,15 +24,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-    Roles roles = await Http.GetFromJsonAsync<List<Role>>("api/Role/GetAllRoles");
-    Countries = await Http.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries");
-    States = await Http.GetFromJsonAsync<List<State>>("api/State/GetAllStates");
-
+        Roles = await Http.GetFromJsonAsync<List<Role>>("api/Role/GetAllRoles");
+        Countries = await Http.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries");
+        States = await Http.GetFromJsonAsync<List<State>>("api/State/GetAllStates");
     }
 
     private async Task HandleValidSubmit()
     {
-    await Http.PostAsJsonAsync("api/Staff/RegisterStaff", registerDto);
-    NavigationManager.NavigateTo("/");
+        await Http.PostAsJsonAsync("api/Patient/RegisterPatient", registerDto);
+        NavigationManager.NavigateTo("/patientlogin");
     }
+
+
 }

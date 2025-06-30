@@ -25,7 +25,7 @@ namespace Infra.Repository.Implementation
         {
             var getAllRole = await _context.Role.ToListAsync();
 
-            if (getAllRole != null)
+            if (getAllRole == null)
             {
                 throw new Exception("No Role Found");
             }
