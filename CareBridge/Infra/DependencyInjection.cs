@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using App.Core.StorageState;
 
 namespace Infra
 {
@@ -24,12 +25,13 @@ namespace Infra
             services.AddScoped<IPatientRepository, PatientRepository>();
             services.AddScoped<IStaffService, StaffService>();
             services.AddScoped<IStaffRepository, StaffRepository>();
-            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<ICountryService, CountryService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IStateService, StateService>();
+            services.AddScoped<UserState>();
             services.AddDbContext<AppDbContext>((provide, options) =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));

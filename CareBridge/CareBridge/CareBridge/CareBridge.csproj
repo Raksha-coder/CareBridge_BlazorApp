@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\App.Core\App.Core.csproj" />
+    <ProjectReference Include="..\..\Infra\Infra.csproj" />
+    <ProjectReference Include="..\..\SharedUI\SharedUI.csproj" />
     <ProjectReference Include="..\CareBridge.Client\CareBridge.Client.csproj" />
   </ItemGroup>
 

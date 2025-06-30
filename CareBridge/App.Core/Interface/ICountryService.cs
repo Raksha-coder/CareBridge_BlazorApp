@@ -1,4 +1,5 @@
-﻿using Domain.ReponseModel;
+﻿using Domain.DataModel.Entity;
+using Domain.ReponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace App.Core.Interface
 {
     public interface ICountryService
     {
-        public Task<JsonModel> GetAllCountryAsync();
+        public Task<List<Country>> GetAllCountryAsync();
     }
 }

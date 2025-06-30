@@ -1,0 +1,70 @@
+﻿@using App.Core.StorageState
+@page "/patientlogin"
+@layout LoginLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+<PageTitle>PatientLogin</PageTitle>
+
+<h1>Patient Login</h1>
+
+<EditForm Model="@loginDto" OnValidSubmit="OnLogin">
+    <DataAnnotationsValidator />
+    <div class="row mt-3">
+        <div class="col-12">
+            <MatTextField @bind-Value="@loginDto.Username" Outlined="true" Label="Username" Style="width: 100%;" />
+            <ValidationMessage For="@(() => loginDto.Username)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <MatTextField @bind-Value="@loginDto.Password" Outlined="true" Label="Password" Style="width: 100%;" />
+            <ValidationMessage For="@(() => loginDto.Password)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary">
+                Login
+            </MatButton>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <MatButtonLink Href="/forgotpassword">
+                Forgot Password?
+            </MatButtonLink>
+        </div>
+        <div class="col-12">
+            <MatButtonLink Href="/Patient/PatientRegistration">
+                Have you registered?
+            </MatButtonLink>
+        </div>
+    </div>
+    <ValidationSummary />
+
+</EditForm>
+
+@code {
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    public UserState UserState = new UserState();
+
+    private JsonModel jsonModel { get; set; }
+
+    private LoginDto loginDto = new LoginDto();
+
+    [Inject]
+    private HttpClient httpClient { get; set; }
+
+    private async Task OnLogin()
+    {
+        UserState.Username = loginDto.Username;
+        await httpClient.PostAsJsonAsync("api/Patient/LoginPatient", loginDto);
+        NavigationManager.NavigateTo("/verifyaccount");
+    }
+
+}

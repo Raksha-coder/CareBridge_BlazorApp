@@ -1,6 +1,5 @@
-﻿@using SharedUI.Layout
-@page "/Patient/PatientRegistration"
-@layout RegisterLayout
+﻿@layout RegisterLayout
+@page "/staff/registration"
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>Register</PageTitle>
@@ -112,8 +111,6 @@
 
 
 @code {
-
-
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
@@ -123,24 +120,27 @@
 
     private List<State> States { get; set; }
 
+    private List<Role>> Roles { get; set; }
+
     [Parameter]
     public JsonModel jsonModel { get; set; }
 
-    public PatientRegisterDto registerDto = new PatientRegisterDto();
+    public StaffRegistrationDto registerDto = new StaffRegistrationDto();
 
     [Inject]
     private HttpClient Http { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Countries = await Http.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries");
-        States = await Http.GetFromJsonAsync<List<State>>("api/State/GetAllStates");
+    Roles roles = await Http.GetFromJsonAsync<List<Role>>("api/Role/GetAllRoles");
+    Countries = await Http.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries");
+    States = await Http.GetFromJsonAsync<List<State>>("api/State/GetAllStates");
+
     }
 
     private async Task HandleValidSubmit()
     {
-        await Http.PostAsJsonAsync("api/Patient/RegisterPatient", registerDto);
-        NavigationManager.NavigateTo("/patientlogin");
+    await Http.PostAsJsonAsync("api/Staff/RegisterStaff", registerDto);
+    NavigationManager.NavigateTo("/");
     }
-
 }

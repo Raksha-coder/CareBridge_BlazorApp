@@ -1,4 +1,6 @@
-﻿using Domain.ReponseModel;
+﻿using App.Core.Dtos;
+using Domain.DataModel.Entity;
+using Domain.ReponseModel;
 using Infra.Context;
 using Infra.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +21,16 @@ namespace Infra.Repository.Implementation
             _context = context;
         }
 
-        public async Task<JsonModel> GetAllCountryAsync()
+        public async Task<List<Country>> GetAllCountryAsync()
         {
-            var getAllCountry = await _context.Country.ToListAsync();
+            var result = await _context.Country.ToListAsync();
 
-            if (getAllCountry != null)
+            if (result == null)
             {
-                return new JsonModel(200, "Country List", getAllCountry);
+                throw new Exception("No Country Found");
             }
-            return new JsonModel(404, "No Country Found", null);
+
+            return result;
         }
     }
 }

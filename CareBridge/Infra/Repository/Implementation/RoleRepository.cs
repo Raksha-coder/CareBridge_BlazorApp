@@ -1,4 +1,5 @@
-﻿using Domain.ReponseModel;
+﻿using Domain.DataModel.Entity;
+using Domain.ReponseModel;
 using Infra.Context;
 using Infra.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -20,15 +21,15 @@ namespace Infra.Repository.Implementation
             _context = context;
         }
 
-        public async Task<JsonModel> GetAllRoleAsync()
+        public async Task<List<Role>> GetAllRoleAsync()
         {
             var getAllRole = await _context.Role.ToListAsync();
 
             if (getAllRole != null)
             {
-                return new JsonModel(200, "Role List", getAllRole);
+                throw new Exception("No Role Found");
             }
-            return new JsonModel(404, "No Role Found", null);
+            return getAllRole;
         }
     }
 }

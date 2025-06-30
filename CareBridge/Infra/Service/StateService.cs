@@ -1,4 +1,5 @@
 ﻿using App.Core.Interface;
+using Domain.DataModel.Entity;
 using Domain.ReponseModel;
 using Infra.Repository.Interface;
 using System;
@@ -12,7 +13,7 @@ namespace Infra.Service
     public class StateService : IStateService
     {
         private readonly IStateRepository _stateRepository;
-        public Task<JsonModel> GetAllStatesAsync()
+        public Task<List<State>> GetAllStatesAsync()
         {
             return _stateRepository.GetAllStatesAsync();
         }

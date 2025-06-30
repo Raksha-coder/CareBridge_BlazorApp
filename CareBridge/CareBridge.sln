@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CareBridge", "CareBridge\Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CareBridge.Client", "CareBridge\CareBridge.Client\CareBridge.Client.csproj", "{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedUI", "SharedUI\SharedUI.csproj", "{5B8F5121-591B-41A6-83D3-B8A9E0130663}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B8F5121-591B-41A6-83D3-B8A9E0130663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B8F5121-591B-41A6-83D3-B8A9E0130663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B8F5121-591B-41A6-83D3-B8A9E0130663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B8F5121-591B-41A6-83D3-B8A9E0130663}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{50687877-E2BB-4C36-93A4-70B9D61E2239} = {938EBF05-A7EA-45B9-814E-674C6DFD07AA}
 		{EE1BED63-C5C9-42FC-AE85-41BEF04D00F5} = {13BEC1B5-A193-4F87-A673-5A12BC6C5580}
 		{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A} = {13BEC1B5-A193-4F87-A673-5A12BC6C5580}
+		{5B8F5121-591B-41A6-83D3-B8A9E0130663} = {13BEC1B5-A193-4F87-A673-5A12BC6C5580}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {86228DC5-9ABD-4E37-A778-261FCEE520C1}

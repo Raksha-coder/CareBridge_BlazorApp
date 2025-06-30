@@ -1,4 +1,5 @@
 ﻿using App.Core.Interface;
+using Infra.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,9 @@ namespace CareBridge.Controllers
     [ApiController]
     public class StateController : ControllerBase
     {
-        private readonly IStateService _stateService;
+        private readonly IStateRepository _stateService;
 
-        public StateController(IStateService stateService)
+        public StateController(IStateRepository stateService)
         {
             _stateService = stateService;
         }

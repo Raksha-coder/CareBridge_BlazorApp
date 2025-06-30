@@ -1,0 +1,18 @@
+/* Full-screen centered container */
+.login-page {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom right, #f0f4ff, #e4e9ff);
+}
+
+.login-container {
+    max-width: 480px; /* Was 700px, now more compact */
+    width: 100%;
+    padding: 2rem; /* Slightly less padding for tighter UI */
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}

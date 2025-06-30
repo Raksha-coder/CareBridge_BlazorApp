@@ -1,4 +1,5 @@
 ﻿using App.Core.Interface;
+using Infra.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,9 @@ namespace CareBridge.Controllers
     [ApiController]
     public class CountryController : ControllerBase
     {
-        private readonly ICountryService _countryService;
+        private readonly ICountryRepository _countryService;
 
-        public CountryController(ICountryService countryService)
+        public CountryController(ICountryRepository countryService)
         {
             _countryService = countryService;
         }

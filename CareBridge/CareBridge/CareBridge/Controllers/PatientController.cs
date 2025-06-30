@@ -17,7 +17,7 @@ namespace CareBridge.Controllers
         }
 
         [HttpPost("RegisterPatient")]
-        public async Task<IActionResult> RegisterPatient([FromBody] PatientRegisterDto registerDto)
+        public async Task<IActionResult> RegisterPatient(PatientRegisterDto registerDto)
         {
             var result = await _patientService.RegisterPatientAsync(registerDto);
             return Ok(result);

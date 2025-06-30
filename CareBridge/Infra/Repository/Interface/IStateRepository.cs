@@ -1,4 +1,5 @@
-﻿using Domain.ReponseModel;
+﻿using Domain.DataModel.Entity;
+using Domain.ReponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Infra.Repository.Interface
 {
     public interface IStateRepository
     {
-        Task<JsonModel> GetAllStatesAsync();
+        Task<List<State>> GetAllStatesAsync();
 
         Task<JsonModel> GetStateByCountryIdAsync(int id);
     }

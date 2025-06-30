@@ -17,11 +17,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\App.Core\App.Core.csproj" />
     <ProjectReference Include="..\..\Infra\Infra.csproj" />
+    <ProjectReference Include="..\..\SharedUI\SharedUI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Authentication\" />
-    <Folder Include="Staff\" />
   </ItemGroup>
 
 </Project>

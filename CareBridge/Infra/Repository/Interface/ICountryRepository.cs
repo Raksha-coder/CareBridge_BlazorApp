@@ -1,4 +1,6 @@
-﻿using Domain.ReponseModel;
+﻿using App.Core.Dtos;
+using Domain.DataModel.Entity;
+using Domain.ReponseModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,6 @@ namespace Infra.Repository.Interface
 {
     public interface ICountryRepository
     {
-        Task<JsonModel> GetAllCountryAsync();
+        public Task<List<Country>> GetAllCountryAsync();
     }
 }

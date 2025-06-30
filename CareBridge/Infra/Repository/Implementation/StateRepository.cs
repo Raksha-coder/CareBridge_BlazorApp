@@ -1,4 +1,5 @@
-﻿using Domain.ReponseModel;
+﻿using Domain.DataModel.Entity;
+using Domain.ReponseModel;
 using Infra.Context;
 using Infra.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +20,15 @@ namespace Infra.Repository.Implementation
         {
             _context = context;
         }
-        public async Task<JsonModel> GetAllStatesAsync()
+        public async Task<List<State>> GetAllStatesAsync()
         {
             var getAllStates = await _context.State.ToListAsync();
 
-            if (getAllStates != null)
+            if (getAllStates == null)
             {
-                return new JsonModel(200, "State List", getAllStates);
+                throw new Exception("No State Found");
             }
-            return new JsonModel(404, "No State Found", null);
+            return getAllStates;
         }
 
         public async Task<JsonModel> GetStateByCountryIdAsync(int id)
