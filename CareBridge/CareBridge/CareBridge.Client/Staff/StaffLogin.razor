@@ -1,5 +1,5 @@
 ﻿@using App.Core.StorageState
-@page "/stafflogin"
+@page "/staff/stafflogin"
 @layout LoginLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 <PageTitle>Staff Login</PageTitle>
@@ -37,7 +37,7 @@
             </MatButtonLink>
         </div>
         <div class="col-12">
-            <MatButtonLink Href="/staff/registration">
+            <MatButtonLink Href="staff/registration">
                 Have you registered?
             </MatButtonLink>
         </div>
@@ -63,8 +63,8 @@
     private async Task OnLogin()
     {
         UserState.Username = loginDto.Username;
-        await httpClient.PostAsJsonAsync("api/Patient/LoginPatient", loginDto);
-        NavigationManager.NavigateTo("/verifyaccount");
+        await httpClient.PostAsJsonAsync("api/Staff/LoginStaff", loginDto);
+        NavigationManager.NavigateTo("/staff/verifyotp");
     }
 
 }

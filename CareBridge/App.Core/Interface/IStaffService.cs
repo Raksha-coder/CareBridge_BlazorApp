@@ -13,7 +13,10 @@ namespace App.Core.Interface
         public Task<JsonModel> RegisterStaffAsync(StaffRegistrationDto registerDto);
         public Task<JsonModel> VerifyOtpAsync(VerifyOtpDto verifyOtpDto);
         public Task<JsonModel> LoginStaffAsync(LoginDto loginDto);
+        Task<List<StaffRegistrationDto>> GetAllStaffAsync();
+
         public Task<JsonModel> GetStaffByIdAsync(int staffId);
         public Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
+
     }
 }

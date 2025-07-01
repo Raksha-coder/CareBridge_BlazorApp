@@ -20,11 +20,6 @@ namespace App.Core.Dtos
         [Required, EmailAddress, MaxLength(100)]
         public string Email { get; set; }
 
-        [Required, MaxLength(50)]
-        public string Username { get; set; }
-
-        [Required, DataType(DataType.Password)]
-        public string Password { get; set; }
 
         [Required, Phone]
         public string PhoneNo { get; set; }
@@ -35,24 +30,30 @@ namespace App.Core.Dtos
         [Required]
         public string Gender { get; set; }
 
+        [Required]
         [MaxLength(100)]
         public string Designation { get; set; } // e.g., Doctor, Nurse
 
+        [Required]
         [MaxLength(100)]
         public string Department { get; set; } // e.g., Cardiology
 
+        [Required]
         [Range(0, 10000)]
         public decimal VisitingCharge { get; set; }
 
+        [Required]
         [DataType(DataType.Date)]
         public DateTime JoiningDate { get; set; }
 
+        [Required]
         public int RoleId { get; set; } // Staff/Doctor role reference
 
         [Required, DataType(DataType.Date)]
         public DateTime DOB { get; set; }
         public int StateId { get; set; }
 
+        [Required]
         [MaxLength(100)]
         public string City { get; set; }
 

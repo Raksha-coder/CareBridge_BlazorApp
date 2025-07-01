@@ -30,6 +30,13 @@ namespace CareBridge.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetAllStaffs")]
+        public async Task<IActionResult> GetAllStaffs()
+        {
+            var result = await _staffService.GetAllStaffAsync();
+            return Ok(result);
+        }
+
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
         {

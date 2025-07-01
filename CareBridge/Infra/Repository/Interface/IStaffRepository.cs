@@ -10,6 +10,8 @@ namespace Infra.Repository.Interface
         Task<JsonModel> VerifyOtpAsync(VerifyOtpDto verifyOtpDto);
         Task<JsonModel> LoginStaffAsync(LoginDto loginDto);
         Task<JsonModel> GetStaffByIdAsync(int staffId);
+
+        Task<List<StaffRegistrationDto>> GetAllStaffAsync();
         Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
     }
 }

@@ -1,7 +1,55 @@
 ﻿@page "/staff/verifyotp"
+@using App.Core.StorageState
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
-<h3>VerifyOTP</h3>
+
+<PageTitle>Verify Account</PageTitle>
+
+<EditForm EditContext="@editContext" OnValidSubmit="VerifyOtp">
+    <DataAnnotationsValidator />
+    <h1>Verify OTP</h1>
+
+    <div class="col-md-6">
+        <MatTextField @bind-Value="@verifyOtpDto.Otp" Outlined="true" Label="OTP" Style="width: 100%;" />
+        <ValidationMessage For="@(() => verifyOtpDto.Otp)" />
+    </div>
+
+    <div class="col-12 mt-3">
+        <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary" disabled="@(!editContext.Validate())">
+            Submit
+        </MatButton>
+    </div>
+
+</EditForm>
 
 @code {
+
+    public UserState userState = new UserState();
+
+    private VerifyOtpDto verifyOtpDto = new VerifyOtpDto();
+
+    private EditContext editContext;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public HttpClient Http { get; set; }
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(verifyOtpDto);
+        editContext.OnFieldChanged += (sender, args) =>
+        {
+            StateHasChanged(); // force refresh when field changes
+        };
+    }
+
+    private async Task VerifyOtp()
+    {
+        verifyOtpDto.UserName = userState.Username;
+        await Http.PostAsJsonAsync("api/Staff/VerifyOtp", verifyOtpDto);
+        NavigationManager.NavigateTo("/staff/dashboard");
+    }
 
 }

@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CareBridge", "CareBridge\Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CareBridge.Client", "CareBridge\CareBridge.Client\CareBridge.Client.csproj", "{EA445937-7C3E-4C3F-AD8F-FFF5C15FFF9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedUI", "SharedUI\SharedUI.csproj", "{5B8F5121-591B-41A6-83D3-B8A9E0130663}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedUI", "SharedUI\SharedUI.csproj", "{5B8F5121-591B-41A6-83D3-B8A9E0130663}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

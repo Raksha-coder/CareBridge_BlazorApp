@@ -1,6 +1,149 @@
-﻿@page "/staffregistration"
+﻿@page "/"
 @layout RegisterLayout
-<h3>StaffRegistration</h3>
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
+
+
+<PageTitle>StaffRegistration</PageTitle>
+
+
+<h1>Staff Register Form </h1>
+
+<EditForm Model="@registerDto" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.FirstName" Outlined="true" Label="First Name"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.FirstName)" />
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.LastName" Outlined="true" Label="Last Name"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.LastName)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Email" Outlined="true" Label="Enter Email"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Email)" />
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.PhoneNo" Outlined="true" Label="Enter Mobile"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.PhoneNo)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatDatePicker TValue="DateTime" @bind-Value="@registerDto.DOB" Outlined="true" Label="Enter  Date Of Birth"></MatDatePicker>
+            <ValidationMessage For="@(() => registerDto.DOB)" />
+        </div>
+        <div class="col-6">
+            @if (Roles != null)
+            {
+                <MatSelect @bind-Value="@registerDto.RoleId" Label="Role" Outlined="true">
+                    @foreach (var item in Roles)
+                    {
+                        <MatOption Value="@item.Id">@item.RoleName</MatOption>
+                    }
+                </MatSelect>
+                <ValidationMessage For="@(() => registerDto.RoleId)" />
+            }
+            else
+            {
+                <p>Loading Roles...</p>
+            }
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Gender" Outlined="true" Label="Enter Gender"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Gender)" />
+        </div>
+        <div class="col-6">
+            @if (States != null && States.Any())
+            {
+                <MatSelect @bind-Value="@registerDto.CountryId" Label="Country" Outlined="true">
+                    @foreach (var item in Countries)
+                    {
+                        <MatOption Value="@item.CountryId"> @item.Name</MatOption>
+                    }
+                </MatSelect>
+                <ValidationMessage For="@(() => registerDto.CountryId)" />
+            }
+            else
+            {
+                <p>Loading Country...</p>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            @if (States != null)
+            {
+                <MatSelect @bind-Value="@registerDto.StateId" Label="State" Outlined="true">
+                    @foreach (var item in States)
+                    {
+                        <MatOption Value="@item.StateId">@item.StateName</MatOption>
+                    }
+                </MatSelect>
+                <ValidationMessage For="@(() => registerDto.StateId)" />
+            }
+            else
+            {
+                <p>Loading states...</p>
+            }
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.City" Outlined="true" Label="Enter  City"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.City)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Address" Outlined="true" Label="Enter  Address"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Address)" />
+        </div>
+
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Department" Outlined="true" Label="Enter Department "></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Department)" />
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Designation" Outlined="true" Label="Enter Designation"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Designation)" />
+        </div>
+        <div class="col-6">
+            <MatDatePicker TValue="DateTime" @bind-Value="@registerDto.JoiningDate" Outlined="true" Label="Enter Joining Date"></MatDatePicker>
+            <ValidationMessage For="@(() => registerDto.JoiningDate)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.VisitingCharge" Outlined="true" Label="Enter Visiting Charge"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.VisitingCharge)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatButton Type="submit" Raised="true">Register </MatButton>
+        </div>
+    </div>
+    <div>
+        <MatButtonLink Href="staff/stafflogin">If You Already Have An Account ?</MatButtonLink>
+    </div>
+
+    <ValidationSummary />
+</EditForm>
+
+
 
 @code {
 
@@ -12,7 +155,6 @@
     private List<Country> Countries { get; set; }
 
     private List<State> States { get; set; }
-
 
     [Parameter]
     public JsonModel jsonModel { get; set; }
@@ -31,8 +173,8 @@
 
     private async Task HandleValidSubmit()
     {
-        await Http.PostAsJsonAsync("api/Patient/RegisterPatient", registerDto);
-        NavigationManager.NavigateTo("/patientlogin");
+        await Http.PostAsJsonAsync("api/Staff/RegisterStaff", registerDto);
+        NavigationManager.NavigateTo("/staff/stafflogin");
     }
 
 

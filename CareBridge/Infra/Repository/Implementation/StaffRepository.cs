@@ -4,6 +4,7 @@ using Domain.DataModel.Entity;
 using Domain.ReponseModel;
 using Infra.Context;
 using Infra.Repository.Interface;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +46,17 @@ namespace Infra.Repository.Implementation
             _context.SaveChanges();
             await _emailService.SendEmailAsync(checkUser.Email, "Password Reset", $"Your new password is: {password}");
             return new JsonModel(200, "Password Reset Successfully", null);
+        }
+
+        public async Task<List<StaffRegistrationDto>> GetAllStaffAsync()
+        {
+            var getAllStaff = await _context.Staff.ToListAsync();
+
+            if (getAllStaff == null || !getAllStaff.Any())
+            {
+                throw new Exception("No Staff Found.");
+            }
+            return getAllStaff.Adapt<List<StaffRegistrationDto>>();
         }
 
         public Task<JsonModel> GetStaffByIdAsync(int staffId)

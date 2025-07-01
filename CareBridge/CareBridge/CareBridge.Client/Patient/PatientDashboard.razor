@@ -4,8 +4,58 @@
 
 <PageTitle>PatientDashboard</PageTitle>
 
-<h1>WelCome Patient Dashboard</h1>
+<div class="dashboard-container">
+    <header class="page-header">
+        <h1>Welcome to Patient Dashboard</h1>
+    </header>
 
+    @if (staff != null && staff.Any())
+    {
+        <div class="doctor-grid">
+            @foreach (var doc in staff)
+            {
+                <MatCard class="doctor-card">
+                    <div class="doctor-card-header">
+                        <MatHeadline6 class="demo-mat-card-clean-margin">
+                            @doc.FirstName @doc.LastName
+                        </MatHeadline6>
+                        <MatSubtitle2 class="demo-mat-card-clean-margin">
+                            @doc.Designation – @doc.Department
+                        </MatSubtitle2>
+                    </div>
+                    <MatCardContent class="doctor-card-body">
+                        <MatBody2 class="demo-mat-card-clean-margin">
+                            <p><strong>Email:</strong> @doc.Email</p>
+                            <p><strong>Phone No:</strong> @doc.PhoneNo</p>
+                            <p><strong>Gender:</strong> @doc.Gender</p>
+                            <p><strong>Address:</strong> @doc.Address</p>
+                            <p><strong>Visiting Charge:</strong> ₹@doc.VisitingCharge:F2</p>
+                        </MatBody2>
+                    </MatCardContent>
+                </MatCard>
+            }
+        </div>
+    }
+    else
+    {
+        <h2 class="no-doctors">No Doctors Found</h2>
+    }
+</div>
 @code {
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    private List<StaffRegistrationDto> staff = new List<StaffRegistrationDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        staff = await Http.GetFromJsonAsync<List<StaffRegistrationDto>>("api/Staff/GetAllStaffs");
+    }
+
+
 
 }

@@ -24,6 +24,11 @@ namespace Infra.Service
             return _staffRepository.ForgotPasswordAsync(forgotPassword);
         }
 
+        public Task<List<StaffRegistrationDto>> GetAllStaffAsync()
+        {
+            return _staffRepository.GetAllStaffAsync();
+        }
+
         public Task<JsonModel> GetStaffByIdAsync(int staffId)
         {
             return _staffRepository.GetStaffByIdAsync(staffId);

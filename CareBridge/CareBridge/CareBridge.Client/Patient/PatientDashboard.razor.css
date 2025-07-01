@@ -1,0 +1,60 @@
+﻿/* 1. Centered page container + some vertical breathing room */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* 2. Page header styling */
+.page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* 3. Responsive grid: 3 columns on desktop, 2 on tablet, 1 on mobile */
+.doctor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* 4. Card styling */
+.doctor-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+    .doctor-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+/* 5. Card header bar */
+.doctor-card-header {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.demo-mat-card-clean-margin {
+    margin: 0 !important;
+}
+
+/* 6. Card body */
+.doctor-card-body {
+    padding: 1rem;
+    background-color: #fff;
+}
+
+/* 7. “No doctors” message centered */
+.no-doctors {
+    text-align: center;
+    color: #777;
+    margin-top: 3rem;
+}
