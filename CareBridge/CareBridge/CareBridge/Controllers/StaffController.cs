@@ -1,5 +1,6 @@
 ﻿using App.Core.Dtos;
 using App.Core.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,6 @@ namespace CareBridge.Controllers
             var result = await _staffService.LoginStaffAsync(loginDto);
             return Ok(result);
         }
-
         [HttpGet("GetAllStaffs")]
         public async Task<IActionResult> GetAllStaffs()
         {

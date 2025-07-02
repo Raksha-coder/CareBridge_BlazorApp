@@ -1,6 +1,12 @@
+using Blazored.LocalStorage;
+using CareBridge.Auth;
 using CareBridge.Components;
 using Infra;
 using MatBlazor;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -8,7 +14,40 @@ var configuration = builder.Configuration;
 
 builder.Services.AddMatBlazor();
 
+builder.Services.AddMatToaster(config =>
+{
+    config.Position = MatToastPosition.TopRight;
+    config.PreventDuplicates = true;
+    config.NewestOnTop = true;
+    config.ShowCloseButton = true;
+    config.MaximumOpacity = 95;
+    config.VisibleStateDuration = 3000;
+});
 
+
+// Add JWT handler
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing in configuration")))
+        };
+    });
+builder.Services.AddHttpClient();
+
+// Add Authorization
+builder.Services.AddAuthorizationCore();
+
+// Add Authentication State Provider for server-side
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+
+// Core Services
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
@@ -38,7 +77,8 @@ else
 
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseCors();

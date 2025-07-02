@@ -1,4 +1,4 @@
-﻿@page "/staff/verifyotp"
+﻿@page "/staff/verifyotp/{UserName}"
 @using App.Core.StorageState
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
@@ -24,7 +24,9 @@
 
 @code {
 
-    public UserState userState = new UserState();
+
+    [Parameter]
+    public string UserName { get; set; }
 
     private VerifyOtpDto verifyOtpDto = new VerifyOtpDto();
 
@@ -38,6 +40,7 @@
 
     protected override void OnInitialized()
     {
+        verifyOtpDto.UserName = UserName;
         editContext = new EditContext(verifyOtpDto);
         editContext.OnFieldChanged += (sender, args) =>
         {
@@ -47,7 +50,7 @@
 
     private async Task VerifyOtp()
     {
-        verifyOtpDto.UserName = userState.Username;
+        verifyOtpDto.UserName = UserName;
         await Http.PostAsJsonAsync("api/Staff/VerifyOtp", verifyOtpDto);
         NavigationManager.NavigateTo("/staff/dashboard");
     }

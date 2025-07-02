@@ -1,5 +1,7 @@
 ﻿@using App.Core.StorageState
-@page "/verifyaccount"
+@using Blazored.LocalStorage
+@using CareBridge.Client.Auth
+@page "/verifyaccount/{Username?}"
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>Verify Account</PageTitle>
@@ -18,17 +20,21 @@
             Submit
         </MatButton>
     </div>
-
+    <ValidationSummary />
+    <MatToastContainer />
 </EditForm>
 
 
 @code {
 
-    public UserState userState = new UserState();
+    [Parameter]
+    public string Username { get; set; }
 
     private VerifyOtpDto verifyOtpDto = new VerifyOtpDto();
 
     private EditContext editContext;
+
+    private JsonModel jsonModel { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -36,8 +42,16 @@
     [Inject]
     public HttpClient Http { get; set; }
 
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+    [Inject]
+
+    private CustomAuthenticationStateProvider AuthStateProvider { get; set; }
+
     protected override void OnInitialized()
     {
+        verifyOtpDto.UserName = Username;
         editContext = new EditContext(verifyOtpDto);
         editContext.OnFieldChanged += (sender, args) =>
         {
@@ -47,9 +61,28 @@
 
     private async Task VerifyOtp()
     {
-        verifyOtpDto.UserName = userState.Username;
-        await Http.PostAsJsonAsync("api/Patient/VerifyOtp", verifyOtpDto);
-        NavigationManager.NavigateTo("/patientdashboard");
+        if (verifyOtpDto.Otp == null)
+        {
+            Toaster.Add("Please enter OTP", MatToastType.Danger);
+            return;
+        }
+        verifyOtpDto.UserName = Username;
+
+        var response = await Http.PostAsJsonAsync<VerifyOtpDto>("api/Patient/VerifyOtp", verifyOtpDto);
+
+        if (response.IsSuccessStatusCode)
+        {
+            jsonModel = await response.Content.ReadFromJsonAsync<JsonModel>();
+            AuthStateProvider.MarkUserAsAuthenticated(jsonModel.Data.ToString());
+            Toaster.Add(jsonModel.Message, MatToastType.Success); // ✅ Show success message
+            NavigationManager.NavigateTo("/patientdashboard");
+        }
+        else
+        {
+            jsonModel = await response.Content.ReadFromJsonAsync<JsonModel>();
+            Toaster.Add(jsonModel.Message ?? "OTP verification failed.", MatToastType.Danger);
+            return;
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 ﻿@page "/patientdashboard"
 @layout MainLayout
+@attribute [Authorize]
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>PatientDashboard</PageTitle>
@@ -29,7 +30,6 @@
                             <p><strong>Phone No:</strong> @doc.PhoneNo</p>
                             <p><strong>Gender:</strong> @doc.Gender</p>
                             <p><strong>Address:</strong> @doc.Address</p>
-                            <p><strong>Visiting Charge:</strong> ₹@doc.VisitingCharge:F2</p>
                         </MatBody2>
                     </MatCardContent>
                 </MatCard>

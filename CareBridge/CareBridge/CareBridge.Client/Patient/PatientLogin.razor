@@ -43,6 +43,7 @@
         </div>
     </div>
     <ValidationSummary />
+    <MatToastContainer />
 
 </EditForm>
 
@@ -57,14 +58,37 @@
 
     private LoginDto loginDto = new LoginDto();
 
+
+
+
     [Inject]
     private HttpClient httpClient { get; set; }
 
+    [Inject]
+    private IMatToaster MatToaster { get; set; }
+
     private async Task OnLogin()
     {
-        UserState.Username = loginDto.Username;
-        await httpClient.PostAsJsonAsync("api/Patient/LoginPatient", loginDto);
-        NavigationManager.NavigateTo("/verifyaccount");
+        if (loginDto.Username == null || loginDto.Password == null)
+        {
+            MatToaster.Add("Please enter username and password", MatToastType.Danger);
+            return;
+        }
+        else
+        {
+            var response = await httpClient.PostAsJsonAsync("api/Patient/LoginPatient", loginDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+
+                MatToaster.Add("Login successful", MatToastType.Success);
+                NavigationManager.NavigateTo($"/verifyaccount/{loginDto.Username}");
+            }
+            else
+            {
+                MatToaster.Add("Login failed", MatToastType.Danger);
+            }
+        }
     }
 
 }

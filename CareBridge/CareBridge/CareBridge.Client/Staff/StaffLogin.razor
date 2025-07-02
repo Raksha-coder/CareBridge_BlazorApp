@@ -51,7 +51,6 @@
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
-    public UserState UserState = new UserState();
 
     private JsonModel jsonModel { get; set; }
 
@@ -62,9 +61,8 @@
 
     private async Task OnLogin()
     {
-        UserState.Username = loginDto.Username;
         await httpClient.PostAsJsonAsync("api/Staff/LoginStaff", loginDto);
-        NavigationManager.NavigateTo("/staff/verifyotp");
+        NavigationManager.NavigateTo($"/staff/verifyotp/{loginDto.Username}");
     }
 
 }
