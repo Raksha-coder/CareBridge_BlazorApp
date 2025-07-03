@@ -16,10 +16,21 @@
 
     <div class="col-12 mt-3">
         <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary" disabled="@(!editContext.Validate())">
-            Submit
+            @if (isLoading)
+            {
+                <div class="top-progress-bar">
+                    <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                </div>
+            }
+            else
+            {
+                <span>Submit</span>
+            }
         </MatButton>
     </div>
 
+    <ValidationSummary />
+    <MatToastContainer />
 </EditForm>
 
 @code {
@@ -38,6 +49,11 @@
     [Inject]
     public HttpClient Http { get; set; }
 
+    [Inject]
+    private IMatToaster Toaster { get; set; }
+
+    private bool isLoading = false;
+
     protected override void OnInitialized()
     {
         verifyOtpDto.UserName = UserName;
@@ -50,9 +66,24 @@
 
     private async Task VerifyOtp()
     {
-        verifyOtpDto.UserName = UserName;
-        await Http.PostAsJsonAsync("api/Staff/VerifyOtp", verifyOtpDto);
-        NavigationManager.NavigateTo("/staff/dashboard");
+        if (string.IsNullOrEmpty(verifyOtpDto.Otp))
+        {
+            Toaster.Add("OTP is required", MatToastType.Danger);
+            return;
+        }
+
+        var response = await Http.PostAsJsonAsync("api/Staff/VerifyOtp", verifyOtpDto);
+        isLoading = true;
+        if (response.IsSuccessStatusCode)
+        {
+            Toaster.Add("Welcome to CareBridge", MatToastType.Success);
+            NavigationManager.NavigateTo("/staff/dashboard");
+        }
+        else
+        {
+            isLoading = false;
+            Toaster.Add("Invalid OTP", MatToastType.Danger);
+        }
     }
 
 }

@@ -17,12 +17,22 @@
 
     <div class="col-12 mt-3">
         <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary" disabled="@(!editContext.Validate())">
-            Submit
+            @if (isLoading)
+            {
+                <div class="top-progress-bar">
+                    <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                </div>
+            }
+            else
+            {
+                <span>Submit</span>
+            }
         </MatButton>
     </div>
     <ValidationSummary />
     <MatToastContainer />
 </EditForm>
+<SharedUI.LoaderComponent.GlobalLoader />
 
 
 @code {
@@ -46,8 +56,12 @@
     public IMatToaster Toaster { get; set; }
 
     [Inject]
-
     private CustomAuthenticationStateProvider AuthStateProvider { get; set; }
+
+    private bool isLoading = false;
+
+    [Inject]
+    private ILocalStorageService LocalStorage { get; set; }
 
     protected override void OnInitialized()
     {
@@ -70,17 +84,42 @@
 
         var response = await Http.PostAsJsonAsync<VerifyOtpDto>("api/Patient/VerifyOtp", verifyOtpDto);
 
+        isLoading = true;
         if (response.IsSuccessStatusCode)
         {
             jsonModel = await response.Content.ReadFromJsonAsync<JsonModel>();
-            AuthStateProvider.MarkUserAsAuthenticated(jsonModel.Data.ToString());
-            Toaster.Add(jsonModel.Message, MatToastType.Success); // ✅ Show success message
-            NavigationManager.NavigateTo("/patientdashboard");
+            if (jsonModel != null && jsonModel.Data != null)
+            {
+                // Parse the authentication response
+                var dataString = jsonModel.Data.ToString() ?? "";
+
+                string token = dataString;
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    // Store token in localStorage
+                    await LocalStorage.SetItemAsync("authToken", token);
+                    // Mark user as authenticated
+                    AuthStateProvider.MarkUserAsAuthenticated(token);
+
+                    Toaster.Add(jsonModel.Message ?? "OTP verified successfully", MatToastType.Success);
+                    NavigationManager.NavigateTo("/patientdashboard");
+                }
+                else
+                {
+                    Toaster.Add("Invalid token received", MatToastType.Danger);
+                }
+            }
+            else
+            {
+                Toaster.Add("Invalid response received", MatToastType.Danger);
+            }
         }
         else
         {
+            isLoading = false;
             jsonModel = await response.Content.ReadFromJsonAsync<JsonModel>();
-            Toaster.Add(jsonModel.Message ?? "OTP verification failed.", MatToastType.Danger);
+            Toaster.Add(jsonModel?.Message ?? "OTP verification failed.", MatToastType.Danger);
             return;
         }
     }

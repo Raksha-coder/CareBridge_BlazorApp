@@ -100,7 +100,22 @@
 
     <div class="row mt-3">
         <div class="col-6">
-            <MatButton Type="submit" Raised="true">Register </MatButton>
+            <MatButton Type="submit" Raised="true">
+
+                @if (isLoading)
+                {
+                    <div class="top-progress-bar">
+                        <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                    </div>
+                }
+                else
+                {
+                    <span>
+                        Register
+                    </span>
+                }
+
+            </MatButton>
         </div>
     </div>
     <div>
@@ -108,6 +123,7 @@
     </div>
 
     <ValidationSummary />
+    <MatToastContainer />
 </EditForm>
 
 
@@ -123,11 +139,15 @@
 
     private List<State> States { get; set; }
 
+    [Inject]
+    private IMatToaster Toaster { get; set; }
 
     [Parameter]
     public JsonModel jsonModel { get; set; }
 
     public PatientRegisterDto registerDto = new PatientRegisterDto();
+
+    public bool isLoading = false;
 
     [Inject]
     private HttpClient Http { get; set; }
@@ -141,8 +161,19 @@
 
     private async Task HandleValidSubmit()
     {
-        await Http.PostAsJsonAsync("api/Patient/RegisterPatient", registerDto);
-        NavigationManager.NavigateTo("/patientlogin");
+
+        var response = await Http.PostAsJsonAsync("api/Patient/RegisterPatient", registerDto);
+        isLoading = true;
+        if (response.IsSuccessStatusCode)
+        {
+            Toaster.Add("Registration successful!", MatToastType.Success);
+            NavigationManager.NavigateTo("/patientlogin");
+        }
+        else
+        {
+            isLoading = false;
+            Toaster.Add("Registration failed. Please try again.", MatToastType.Danger);
+        }
     }
 
 }

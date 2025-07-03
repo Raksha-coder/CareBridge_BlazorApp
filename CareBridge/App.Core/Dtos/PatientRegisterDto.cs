@@ -13,15 +13,18 @@ namespace App.Core.Dtos
         public int PatientId { get; set; }
 
         [Required, MaxLength(50)]
+        [RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "First name must contain only letters.")]
         public string FirstName { get; set; }
 
         [Required, MaxLength(50)]
+        [RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "Last name must contain only letters.")]
         public string LastName { get; set; }
 
         [Required, EmailAddress, MaxLength(100)]
         public string Email { get; set; }
 
         [Required, Phone]
+        [RegularExpression("^[0-9]{6}$", ErrorMessage = "Enter a valid 10-digit Mobile Number.")]
         public string Mobile { get; set; }
 
         [DataType(DataType.Date)]
@@ -30,6 +33,7 @@ namespace App.Core.Dtos
 
         [Required]
         [MaxLength(5)]
+
         public string BloodGroup { get; set; }
 
         [Required]
@@ -43,6 +47,7 @@ namespace App.Core.Dtos
 
         [Required]
         [Range(100000, 999999)]
+        [RegularExpression("^[0-9]{6}$", ErrorMessage = "Enter a valid 6-digit Pin Code.")]
         public int PinCode { get; set; }
 
         [Required(ErrorMessage = "State is required")]
@@ -50,6 +55,7 @@ namespace App.Core.Dtos
 
         [MaxLength(100)]
         [Required(ErrorMessage = "City is required")]
+        [RegularExpression("^[a-zA-Z ]*$", ErrorMessage = "City must contain only letters.")]
         public string City { get; set; }
         [Required(ErrorMessage = "Country is required")]
         public int CountryId { get; set; }

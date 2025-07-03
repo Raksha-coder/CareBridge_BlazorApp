@@ -47,6 +47,8 @@ builder.Services.AddAuthorizationCore();
 // Add Authentication State Provider for server-side
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 
+// Loader Service
+
 // Core Services
 builder.Services.AddCors(options =>
 {
@@ -87,4 +89,4 @@ app.MapRazorComponents<CareBridge.Components.App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(CareBridge.Client._Imports).Assembly);
 
-app.Run();
+await app.RunAsync();

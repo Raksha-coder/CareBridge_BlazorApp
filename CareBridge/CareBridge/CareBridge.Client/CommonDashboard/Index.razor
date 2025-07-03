@@ -1,0 +1,29 @@
+﻿@layout LoginLayout
+@page "/"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<h3>Welcome</h3>
+
+<MatButton Raised="true" OnClick="@GoToPatient" Style="margin-right: 10px;">
+    Go to Patient
+</MatButton>
+
+<MatButton Raised="true" OnClick="@GoToStaff">
+    Go to Staff
+</MatButton>
+
+@code {
+
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    private void GoToPatient()
+    {
+        Navigation.NavigateTo("/patientlogin");
+    }
+
+    private void GoToStaff()
+    {
+        Navigation.NavigateTo("/staff/stafflogin");
+    }
+}

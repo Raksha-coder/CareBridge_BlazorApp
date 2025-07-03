@@ -1,21 +1,42 @@
+using App.Core.Service;
 using Blazored.LocalStorage;
 using CareBridge.Client.Auth;
+using Infra.ThirdPartyService;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// Register the authenticated HTTP client handler
+builder.Services.AddScoped<AuthenticatedHttpClientHandler>();
+
+// Configure HttpClient with the authenticated handler
+builder.Services.AddScoped(sp =>
+{
+    var handler = sp.GetRequiredService<AuthenticatedHttpClientHandler>();
+    handler.InnerHandler = new HttpClientHandler();
+
+    var httpClient = new HttpClient(handler)
+    {
+        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    };
+
+    return httpClient;
+});
 
 builder.Services.AddMatBlazor();
 // Blazored LocalStorage
 builder.Services.AddBlazoredLocalStorage();
 
+
 // Authentication
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
 builder.Services.AddAuthorizationCore();
+
+// Register LoaderService for client-side
+builder.Services.AddScoped<LoaderService>();
 
 
 builder.Services.AddMatToaster(config =>

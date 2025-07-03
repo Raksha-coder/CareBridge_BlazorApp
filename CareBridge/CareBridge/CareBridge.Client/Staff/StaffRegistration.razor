@@ -164,6 +164,12 @@
     [Inject]
     private HttpClient Http { get; set; }
 
+    public bool isLoading = false;
+
+    [Inject]
+    private IMatToaster Toaster { get; set; }
+
+
     protected override async Task OnInitializedAsync()
     {
         Roles = await Http.GetFromJsonAsync<List<Role>>("api/Role/GetAllRoles");
@@ -173,8 +179,24 @@
 
     private async Task HandleValidSubmit()
     {
-        await Http.PostAsJsonAsync("api/Staff/RegisterStaff", registerDto);
-        NavigationManager.NavigateTo("/staff/stafflogin");
+        if (registerDto == null)
+        {
+            Toaster.Add("Registration Failed", MatToastType.Danger);
+            return;
+        }
+
+        var response = await Http.PostAsJsonAsync("api/Staff/RegisterStaff", registerDto);
+        isLoading = true;
+        if (response.IsSuccessStatusCode)
+        {
+            Toaster.Add("Registration successful!", MatToastType.Success);
+            NavigationManager.NavigateTo("/staff/stafflogin");
+        }
+        else
+        {
+            isLoading = false;
+            Toaster.Add("Registration failed. Please try again.", MatToastType.Danger);
+        }
     }
 
 

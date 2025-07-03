@@ -18,3 +18,11 @@
     max-width: 900px;
     width: 100%;
 }
+
+.top-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+}

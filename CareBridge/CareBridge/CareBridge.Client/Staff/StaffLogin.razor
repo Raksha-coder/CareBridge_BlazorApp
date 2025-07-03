@@ -43,6 +43,7 @@
         </div>
     </div>
     <ValidationSummary />
+    <MatToastContainer />
 
 </EditForm>
 
@@ -51,18 +52,42 @@
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
+    [Inject]
+    private IMatToaster Toaster { get; set; }
 
     private JsonModel jsonModel { get; set; }
 
     private LoginDto loginDto = new LoginDto();
+
+    private bool isLoading = false;
 
     [Inject]
     private HttpClient httpClient { get; set; }
 
     private async Task OnLogin()
     {
-        await httpClient.PostAsJsonAsync("api/Staff/LoginStaff", loginDto);
-        NavigationManager.NavigateTo($"/staff/verifyotp/{loginDto.Username}");
+        if (string.IsNullOrEmpty(loginDto.Username) || string.IsNullOrEmpty(loginDto.Password))
+        {
+            Toaster.Add("Username and Password are required.", MatToastType.Danger);
+            return;
+        }
+        else
+        {
+            isLoading = true;
+            var response = await httpClient.PostAsJsonAsync("api/Staff/LoginStaff", loginDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Toaster.Add("Login successful.", MatToastType.Success);
+                NavigationManager.NavigateTo($"/staff/verifyotp/{loginDto.Username}");
+            }
+            else
+            {
+                isLoading = false;
+                Toaster.Add("Login failed", MatToastType.Danger);
+            }
+
+        }
     }
 
 }

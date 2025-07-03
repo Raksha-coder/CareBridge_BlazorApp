@@ -4,50 +4,69 @@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 <PageTitle>PatientLogin</PageTitle>
 
-<h1>Patient Login</h1>
+@if (isComponentLoading)
+{
+    <GlobalLoader />
+}
+else
+{
+    <h1>Patient Login</h1>
 
-<EditForm Model="@loginDto" OnValidSubmit="OnLogin">
-    <DataAnnotationsValidator />
-    <div class="row mt-3">
-        <div class="col-12">
-            <MatTextField @bind-Value="@loginDto.Username" Outlined="true" Label="Username" Style="width: 100%;" />
-            <ValidationMessage For="@(() => loginDto.Username)" />
+    <EditForm Model="@loginDto" OnValidSubmit="OnLogin">
+        <DataAnnotationsValidator />
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatTextField @bind-Value="@loginDto.Username" Outlined="true" Label="Username" Style="width: 100%;" />
+                <ValidationMessage For="@(() => loginDto.Username)" />
+            </div>
         </div>
-    </div>
 
-    <div class="row mt-3">
-        <div class="col-12">
-            <MatTextField @bind-Value="@loginDto.Password" Outlined="true" Label="Password" Style="width: 100%;" />
-            <ValidationMessage For="@(() => loginDto.Password)" />
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatTextField @bind-Value="@loginDto.Password" Outlined="true" Label="Password" Style="width: 100%;" />
+                <ValidationMessage For="@(() => loginDto.Password)" />
+            </div>
         </div>
-    </div>
 
-    <div class="row mt-3">
-        <div class="col-12">
-            <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary">
-                Login
-            </MatButton>
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary" Disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <div class="top-progress-bar">
+                            <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                        </div>
+                    }
+                    else
+                    {
+                        <span>Login</span>
+                    }
+                </MatButton>
+            </div>
         </div>
-    </div>
 
-    <div class="row mt-3">
-        <div class="col-12">
-            <MatButtonLink Href="/forgotpassword">
-                Forgot Password?
-            </MatButtonLink>
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatButtonLink Href="/forgotpassword">
+                    Forgot Password?
+                </MatButtonLink>
+            </div>
+            <div class="col-12">
+                <MatButtonLink Href="/Patient/PatientRegistration">
+                    Have you registered?
+                </MatButtonLink>
+            </div>
         </div>
-        <div class="col-12">
-            <MatButtonLink Href="/Patient/PatientRegistration">
-                Have you registered?
-            </MatButtonLink>
-        </div>
-    </div>
-    <ValidationSummary />
-    <MatToastContainer />
+        <ValidationSummary />
+        <MatToastContainer />
 
-</EditForm>
+    </EditForm>
+
+}
 
 @code {
+    private bool isLoading = false;
+    private bool isComponentLoading = true; // Component loading state
 
     [Inject]
     private NavigationManager NavigationManager { get; set; }
@@ -59,14 +78,19 @@
     private LoginDto loginDto = new LoginDto();
 
 
-
-
     [Inject]
     private HttpClient httpClient { get; set; }
 
     [Inject]
     private IMatToaster MatToaster { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate component initialization
+        await Task.Delay(500); // Ya koi actual initialization logic
+        isComponentLoading = false;
+        StateHasChanged();
+    }
     private async Task OnLogin()
     {
         if (loginDto.Username == null || loginDto.Password == null)
@@ -76,6 +100,7 @@
         }
         else
         {
+            isLoading = true;
             var response = await httpClient.PostAsJsonAsync("api/Patient/LoginPatient", loginDto);
 
             if (response.IsSuccessStatusCode)
@@ -86,6 +111,7 @@
             }
             else
             {
+                isLoading = false;
                 MatToaster.Add("Login failed", MatToastType.Danger);
             }
         }
