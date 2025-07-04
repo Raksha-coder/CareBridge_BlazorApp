@@ -31,6 +31,9 @@
                             <p><strong>Address:</strong> @doc.Address</p>
                         </MatBody2>
                     </MatCardContent>
+                    <MatCardActions class="doctor-card-actions">
+                        <MatButton Raised="true" Color="MatButtonColor.Primary" OnClick="@(() => onSubmt(doc.Id))">Book Appointment</MatButton>
+                    </MatCardActions>
                 </MatCard>
             }
         </div>
@@ -53,6 +56,12 @@
     protected override async Task OnInitializedAsync()
     {
         staff = await Http.GetFromJsonAsync<List<StaffRegistrationDto>>("api/Staff/GetAllStaffs");
+    }
+
+
+    private void onSubmt(int id)
+    {
+        NavigationManager.NavigateTo($"/patientappointment/{id}");
     }
 
 

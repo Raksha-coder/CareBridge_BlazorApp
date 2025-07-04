@@ -1,0 +1,119 @@
+﻿@page "/Appoinment/BookAppoinment/{id?}"
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
+
+<PageTitle>Book Appointment</PageTitle>
+
+<div class="mt-5 mx-4">
+    <h2 class="mb-4 text-center">Book an Appointment</h2>
+
+    @if (staffRegistrationDto != null)
+    {
+        <MatCard Class="mb-5 elevation-4">
+            <MatHeadline6>
+                <h4 class="text-primary">Doctor Details</h4>
+            </MatHeadline6>
+            <MatCardContent>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Name:</strong> @staffRegistrationDto.FirstName @staffRegistrationDto.LastName</p>
+                        <p><strong>Email:</strong> @staffRegistrationDto.Email</p>
+                        <p><strong>Phone:</strong> @staffRegistrationDto.PhoneNo</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Designation:</strong> @staffRegistrationDto.Designation</p>
+                        <p><strong>Department:</strong> @staffRegistrationDto.Designation</p>
+                        <p><strong></strong> @staffRegistrationDto Years</p>
+                    </div>
+                </div>
+            </MatCardContent>
+        </MatCard>
+    }
+
+    <MatCard Class="elevation-3">
+        <MatHeadline6>
+            <h4 class="text-success">Appointment Form</h4>
+        </MatHeadline6>
+        <MatCardContent>
+            <EditForm Model="@appoinmentDto" OnValidSubmit="@OnBookAppoinment">
+                <DataAnnotationsValidator />
+
+                <MatDatePicker Label="Appointment Date" @bind-Value="appoinmentDto.Date" />
+
+                <MudTimePicker ActionsClass="mt-3" Label="Start Time" @bind-Value="appoinmentDto.StartTime" OnChange="@OnStartTimeChanged">
+
+                </MudTimePicker>
+                <MudTimePicker ActionsClass="mt-3" Label="End Time" @bind-Value="appoinmentDto.EndTime">
+
+                </MudTimePicker>
+
+                <MatTextField Label="Reason"
+                              TextFieldType="MatTextFieldType.TextArea"
+                              @bind-Value="appoinmentDto.Reason" />
+
+                <MatButton Raised="true" ButtonType="MatButtonType.Submit" Class="mt-3">Book Appointment</MatButton>
+                <ValidationSummary />
+
+            </EditForm>
+
+        </MatCardContent>
+    </MatCard>
+</div>
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+
+    private StaffRegistrationDto staffRegistrationDto = new StaffRegistrationDto();
+
+    private AppoinmentDto appoinmentDto = new AppoinmentDto();
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
+    [Inject]
+    private IMatToaster Toaster { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var id = Convert.ToInt32(this.id);
+        staffRegistrationDto = await Http.GetFromJsonAsync<StaffRegistrationDto>("/api/StaffRegistration/" + id);
+    }
+
+    private void OnStartTimeChanged(TimeSpan newStartTime)
+    {
+        appoinmentDto.StartTime = newStartTime;
+
+        // Suggest EndTime = StartTime + 1 Hour (default)
+        var suggestedEnd = newStartTime.Add(TimeSpan.FromHours(1));
+
+        if (suggestedEnd.TotalHours <= 23)
+            appoinmentDto.EndTime = suggestedEnd;
+    }
+
+
+    private async Task OnBookAppoinment()
+    {
+        if (appoinmentDto == null)
+        {
+            Toaster.Add("Please Enter Appoinment Details", MatToastType.Danger);
+            return;
+        }
+        else
+        {
+            appoinmentDto.StaffId = staffRegistrationDto.Id;
+            await Http.PostAsJsonAsync("/api/Appoinment", appoinmentDto);
+            Toaster.Add("Appoinment Booked Successfully", MatToastType.Success);
+            Navigation.NavigateTo("/Appoinment/Payment");
+        }
+    }
+
+
+
+
+
+}

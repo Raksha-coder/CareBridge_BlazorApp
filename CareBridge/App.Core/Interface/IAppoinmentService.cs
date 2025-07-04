@@ -1,0 +1,18 @@
+﻿using App.Core.Dtos;
+using Domain.ReponseModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace App.Core.Interface
+{
+    public interface IAppoinmentService
+    {
+        Task<JsonModel> GetAppoinmenByStaffIdAsync(int staffId);
+        Task<JsonModel> GetAppoinmenByPatientIdAsync(int patientId);
+        Task<JsonModel> BookAppoinmentAsync(AppoinmentDto appoinmentDto);
+        Task<JsonModel> UpdateAppoinmentAsync(AppoinmentDto appoinmentDto);
+    }
+}

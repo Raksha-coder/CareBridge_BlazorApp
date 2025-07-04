@@ -50,5 +50,12 @@ namespace CareBridge.Controllers
             var result = await _staffService.VerifyOtpAsync(verifyOtpDto);
             return Ok(result);
         }
+
+        [HttpGet("GetStaffById/{staffId}")]
+        public async Task<IActionResult> GetStaffById(int staffId)
+        {
+            var result = await _staffService.GetStaffByIdAsync(staffId);
+            return Ok(result);
+        }
     }
 }

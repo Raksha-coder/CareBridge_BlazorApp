@@ -1,10 +1,10 @@
 using App.Core.Service;
 using Blazored.LocalStorage;
 using CareBridge.Client.Auth;
-using Infra.ThirdPartyService;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -26,6 +26,7 @@ builder.Services.AddScoped(sp =>
 });
 
 builder.Services.AddMatBlazor();
+builder.Services.AddMudServices();
 // Blazored LocalStorage
 builder.Services.AddBlazoredLocalStorage();
 
@@ -36,7 +37,6 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.Get
 builder.Services.AddAuthorizationCore();
 
 // Register LoaderService for client-side
-builder.Services.AddScoped<LoaderService>();
 
 
 builder.Services.AddMatToaster(config =>

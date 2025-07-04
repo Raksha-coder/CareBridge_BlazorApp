@@ -19,5 +19,6 @@ namespace Infra.Context
         public DbSet<State> State { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Otp> Otp { get; set; }
+        public DbSet<Appoinment> Appoinment { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@using App.Core.StorageState
 @using Blazored.LocalStorage
 @using CareBridge.Client.Auth
+@using System.Net.Http.Headers
 @page "/verifyaccount/{Username?}"
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
@@ -99,6 +100,11 @@
                 {
                     // Store token in localStorage
                     await LocalStorage.SetItemAsync("authToken", token);
+
+                    // Set the token in the HttpClient header
+                    Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+
                     // Mark user as authenticated
                     AuthStateProvider.MarkUserAsAuthenticated(token);
 

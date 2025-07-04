@@ -59,9 +59,15 @@ namespace Infra.Repository.Implementation
             return getAllStaff.Adapt<List<StaffRegistrationDto>>();
         }
 
-        public Task<JsonModel> GetStaffByIdAsync(int staffId)
+        public async Task<JsonModel> GetStaffByIdAsync(int staffId)
         {
-            throw new NotImplementedException();
+            var checkStaff = await _context.Staff.FirstOrDefaultAsync(a => a.Id == staffId && a.IsActive == true && a.IsDeleted == false && a.RoleId == 1);
+
+            if (checkStaff == null)
+            {
+                throw new Exception("Staff not found.");
+            }
+            return new JsonModel(200, "Staff Found Successfully", checkStaff.Adapt<StaffRegistrationDto>());
         }
 
         public async Task<JsonModel> LoginStaffAsync(LoginDto loginDto)
