@@ -1,13 +1,11 @@
-using Blazored.LocalStorage;
+using System.Text;
+using App.Infrastructure;
 using CareBridge.Auth;
-using CareBridge.Components;
-using Infra;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
