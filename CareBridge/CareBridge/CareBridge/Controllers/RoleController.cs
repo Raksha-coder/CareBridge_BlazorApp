@@ -1,7 +1,4 @@
-﻿using App.Core.Interface;
-using Infra.Repository.Interface;
-using Infra.Service;
-using Microsoft.AspNetCore.Http;
+﻿using App.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CareBridge.Controllers

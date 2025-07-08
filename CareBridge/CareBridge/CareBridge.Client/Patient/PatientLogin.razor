@@ -1,5 +1,4 @@
-﻿@using App.Core.StorageState
-@page "/patientlogin"
+﻿@page "/patientlogin"
 @layout LoginLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 <PageTitle>PatientLogin</PageTitle>
@@ -73,7 +72,7 @@ else
 
     public UserState UserState = new UserState();
 
-    private JsonModel jsonModel { get; set; }
+    private JsonResponseDto jsonModel { get; set; }
 
     private LoginDto loginDto = new LoginDto();
 

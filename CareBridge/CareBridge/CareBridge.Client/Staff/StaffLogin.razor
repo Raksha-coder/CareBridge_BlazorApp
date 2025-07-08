@@ -1,5 +1,4 @@
-﻿@using App.Core.StorageState
-@page "/staff/stafflogin"
+﻿@page "/staff/stafflogin"
 @layout LoginLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 <PageTitle>Staff Login</PageTitle>
@@ -55,7 +54,7 @@
     [Inject]
     private IMatToaster Toaster { get; set; }
 
-    private JsonModel jsonModel { get; set; }
+    private JsonResponseDto jsonModel { get; set; }
 
     private LoginDto loginDto = new LoginDto();
 

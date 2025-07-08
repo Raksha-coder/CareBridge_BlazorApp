@@ -18,9 +18,8 @@
 		<PackageReference Include="MudBlazor" Version="8.9.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\App.Core\App.Core.csproj" />
-		<ProjectReference Include="..\Infra\Infra.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\App.Infrastructure\App.Infrastructure.csproj" />
+  </ItemGroup>
 
 </Project>

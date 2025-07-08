@@ -1,7 +1,5 @@
-﻿using App.Core.Dtos;
-using App.Core.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using App.Application.DTOs;
+using App.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CareBridge.Controllers

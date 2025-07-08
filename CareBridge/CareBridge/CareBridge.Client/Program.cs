@@ -1,4 +1,4 @@
-using App.Core.Service;
+using App.Application.Services;
 using Blazored.LocalStorage;
 using CareBridge.Client.Auth;
 using MatBlazor;
