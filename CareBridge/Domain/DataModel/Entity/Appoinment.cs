@@ -21,8 +21,8 @@ namespace Domain.DataModel.Entity
         public int StaffId { get; set; }
         public Staff Staff { get; set; }
         public DateTime Date { get; set; }
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
         public string Reason { get; set; }
         // Use enum instead of string for safety
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;

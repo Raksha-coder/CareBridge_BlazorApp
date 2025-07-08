@@ -1,0 +1,33 @@
+﻿.custom-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+    .custom-card:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    }
+
+.section-title {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #dcdcdc;
+    padding-bottom: 8px;
+    font-weight: 600;
+}
+
+.btn-custom {
+    background-color: #198754 !important; /* Bootstrap success color */
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .btn-custom:hover {
+        background-color: #157347 !important;
+    }

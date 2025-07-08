@@ -29,7 +29,7 @@ namespace Infra.Service
             return _staffRepository.GetAllStaffAsync();
         }
 
-        public Task<JsonModel> GetStaffByIdAsync(int staffId)
+        public Task<StaffRegistrationDto> GetStaffByIdAsync(int staffId)
         {
             return _staffRepository.GetStaffByIdAsync(staffId);
         }

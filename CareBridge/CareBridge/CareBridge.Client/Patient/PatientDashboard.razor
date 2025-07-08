@@ -58,10 +58,9 @@
         staff = await Http.GetFromJsonAsync<List<StaffRegistrationDto>>("api/Staff/GetAllStaffs");
     }
 
-
     private void onSubmt(int id)
     {
-        NavigationManager.NavigateTo($"/patientappointment/{id}");
+        NavigationManager.NavigateTo($"/Appoinment/BookAppoinment/{id}");
     }
 
 

@@ -19,13 +19,14 @@ namespace App.Core.Dtos
         [Required]
         public DateTime Date { get; set; }
         [Required]
-        public TimeSpan StartTime { get; set; }
+        public TimeOnly StartTime { get; set; }
         [Required]
-        public TimeSpan EndTime { get; set; }
+        public TimeOnly EndTime { get; set; }
         [Required]
         [MaxLength(100)]
         public string Reason { get; set; }
         public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
+
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -35,7 +36,7 @@ namespace App.Core.Dtos
             if (StartTime > EndTime)
                 yield return new ValidationResult("Start time cannot be after end time.", new[] { nameof(StartTime), nameof(EndTime) });
 
-            if (StartTime == TimeSpan.Zero || EndTime == TimeSpan.Zero)
+            if (StartTime == TimeOnly.MinValue || EndTime == TimeOnly.MinValue)
                 yield return new ValidationResult("Start and end times cannot be 00:00.", new[] { nameof(StartTime), nameof(EndTime) });
 
             if ((EndTime - StartTime).TotalMinutes < 60)

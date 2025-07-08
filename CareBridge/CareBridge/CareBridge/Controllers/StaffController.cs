@@ -51,10 +51,10 @@ namespace CareBridge.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetStaffById/{staffId}")]
-        public async Task<IActionResult> GetStaffById(int staffId)
+        [HttpGet("GetStaffById/{id}")]
+        public async Task<IActionResult> GetStaffById(int id)
         {
-            var result = await _staffService.GetStaffByIdAsync(staffId);
+            var result = await _staffService.GetStaffByIdAsync(id);
             return Ok(result);
         }
     }

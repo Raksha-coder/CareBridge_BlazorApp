@@ -15,7 +15,7 @@ namespace App.Core.Interface
         public Task<JsonModel> LoginStaffAsync(LoginDto loginDto);
         Task<List<StaffRegistrationDto>> GetAllStaffAsync();
 
-        public Task<JsonModel> GetStaffByIdAsync(int staffId);
+        public Task<StaffRegistrationDto> GetStaffByIdAsync(int staffId);
         public Task<JsonModel> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
 
     }
