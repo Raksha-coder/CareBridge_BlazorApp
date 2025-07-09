@@ -26,7 +26,6 @@ builder.Services.AddScoped(sp =>
 });
 
 builder.Services.AddMatBlazor();
-builder.Services.AddMudServices();
 // Blazored LocalStorage
 builder.Services.AddBlazoredLocalStorage();
 

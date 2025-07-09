@@ -26,7 +26,7 @@
             <ValidationMessage For="@(() => registerDto.Email)" />
         </div>
         <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.Mobile" Outlined="true" Label="Enter Mobile"></MatTextField>
+            <MatTextField @bind-Value="@registerDto.Mobile" Outlined="true" MaxLength="12" Label="Enter Mobile"></MatTextField>
             <ValidationMessage For="@(() => registerDto.Mobile)" />
         </div>
     </div>
@@ -119,9 +119,11 @@
         </div>
     </div>
     <div>
-        <MatButtonLink Href="/">If You Already Have An Account ?</MatButtonLink>
+        <MatButtonLink Href="/patientlogin">If You Already Have An Account ?</MatButtonLink>
     </div>
-
+    <div>
+        <MatButtonLink Href="/">Home</MatButtonLink>
+    </div>
     <ValidationSummary />
     <MatToastContainer />
 </EditForm>

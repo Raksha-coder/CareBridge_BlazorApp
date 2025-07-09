@@ -33,22 +33,4 @@
     [Inject]
     private NavigationManager NavigationManager { get; set; }
 
-    [Inject]
-    private Blazored.LocalStorage.I localStorage { get; set; }
-
-    protected override void OnInitialized()
-    {
-        // read token from local storage and get the value
-        var token = localStorage.getItem("token");
-        if (token != null)
-        {
-            NavigationManager.NavigateTo("counter");
-        }
-
-        base.OnInitialized();
-    }
-
-
-
-
 }

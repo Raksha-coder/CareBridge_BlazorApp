@@ -18,8 +18,8 @@ namespace App.Application.DTOs
         [Required, EmailAddress, MaxLength(100)]
         public string Email { get; set; }
 
-        [Required, Phone]
-        [RegularExpression("^[0-9]{6}$", ErrorMessage = "Enter a valid 10-digit Mobile Number.")]
+        [Required]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Enter a valid 10-digit Mobile Number.")]
         public string Mobile { get; set; }
 
         [DataType(DataType.Date)]

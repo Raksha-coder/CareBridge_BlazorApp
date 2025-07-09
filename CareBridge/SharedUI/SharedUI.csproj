@@ -6,7 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
-
 	<ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>
@@ -18,8 +17,8 @@
 		<PackageReference Include="MudBlazor" Version="8.9.0" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\App.Infrastructure\App.Infrastructure.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\App.Infrastructure\App.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>

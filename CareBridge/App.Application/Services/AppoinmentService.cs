@@ -1,13 +1,13 @@
 ﻿using App.Application.DTOs;
 using App.Application.Interfaces.Repositories;
 using App.Application.Interfaces.Services;
+using Microsoft.Extensions.Logging;
 
 namespace App.Application.Services
 {
     public class AppoinmentService : IAppoinmentService
     {
         private readonly IAppoinmentRepository _appoinmentRepository;
-
         public AppoinmentService(IAppoinmentRepository appoinmentRepository)
         {
             _appoinmentRepository = appoinmentRepository;

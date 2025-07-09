@@ -7,6 +7,7 @@ namespace App.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
+        public string ProfileImage { get; set; } = string.Empty;
 
         [Required, MaxLength(50)]
         public string FirstName { get; set; }

@@ -23,7 +23,7 @@ namespace App.Application.Services
             return _staffRepository.GetAllStaffAsync();
         }
 
-        public Task<JsonResponseDto> GetStaffByIdAsync(int staffId)
+        public Task<StaffRegistrationDto> GetStaffByIdAsync(int staffId)
         {
             return _staffRepository.GetStaffByIdAsync(staffId);
         }

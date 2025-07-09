@@ -1,10 +1,8 @@
-﻿@page "/staffregistration"
+﻿@page "/staff/staffregistration"
 @layout RegisterLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
 
-
 <PageTitle>StaffRegistration</PageTitle>
-
 
 <h1>Staff Register Form </h1>
 
@@ -27,7 +25,7 @@
             <ValidationMessage For="@(() => registerDto.Email)" />
         </div>
         <div class="col-6">
-            <MatTextField @bind-Value="@registerDto.PhoneNo" Outlined="true" Label="Enter Mobile"></MatTextField>
+            <MatTextField @bind-Value="@registerDto.PhoneNo" Outlined="true" MaxLength="12" Label="Enter Mobile"></MatTextField>
             <ValidationMessage For="@(() => registerDto.PhoneNo)" />
         </div>
     </div>
@@ -137,7 +135,10 @@
         </div>
     </div>
     <div>
-        <MatButtonLink Href="/">If You Already Have An Account ?</MatButtonLink>
+        <MatButtonLink Href="/staff/stafflogin">If You Already Have An Account ?</MatButtonLink>
+    </div>
+    <div>
+        <MatButtonLink Href="/">Home</MatButtonLink>
     </div>
 
     <ValidationSummary />

@@ -19,7 +19,7 @@ namespace App.Application.DTOs
         public string Email { get; set; }
 
 
-        [Required, Phone]
+        [Required]
         [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "Enter a valid 10-digit Mobile Number.")]
         public string PhoneNo { get; set; }
 
