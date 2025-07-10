@@ -11,5 +11,6 @@
         public DateTime DeletedDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+        public Guid URI { get; set; }
     }
 }

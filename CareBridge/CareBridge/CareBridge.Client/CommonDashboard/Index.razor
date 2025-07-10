@@ -12,6 +12,9 @@
     Go to Staff
 </MatButton>
 
+<MatButton Raised="true" OnClick="@GoToSuperAdmin" Style="margin-right: 10px;"></MatButton>
+
+
 @code {
 
     [Inject]
@@ -26,4 +29,9 @@
     {
         Navigation.NavigateTo("/staff/stafflogin");
     }
-}
+
+    private void GoToSuperAdmin()
+    {
+        Navigation.NavigateTo("/superadmin/superadminlogin");
+    }
+    }

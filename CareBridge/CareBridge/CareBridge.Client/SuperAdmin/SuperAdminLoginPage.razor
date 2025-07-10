@@ -1,0 +1,112 @@
+﻿@page "/superadmin/superadminlogin"
+@layout LoginLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+<PageTitle>SuperAdminLogin</PageTitle>
+
+@if (isComponentLoading)
+{
+    <GlobalLoader />
+}
+else
+{
+    <h1>Care Bridge Login</h1>
+
+    <EditForm Model="@loginDto" OnValidSubmit="OnLogin">
+        <DataAnnotationsValidator />
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatTextField @bind-Value="@loginDto.Email" Outlined="true" Label="Email" Style="width: 100%;" />
+                <ValidationMessage For="@(() => loginDto.Email)" />
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatTextField @bind-Value="@loginDto.Password" Outlined="true" Label="Password" Style="width: 100%;" />
+                <ValidationMessage For="@(() => loginDto.Password)" />
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary" Disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <div class="top-progress-bar">
+                            <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                        </div>
+                    }
+                    else
+                    {
+                        <span>Login</span>
+                    }
+                </MatButton>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <MatButtonLink Href="/forgotpassword">
+                    Forgot Password?
+                </MatButtonLink>
+            </div>
+        </div>
+        <ValidationSummary />
+        <MatToastContainer />
+
+    </EditForm>
+
+}
+
+@code {
+
+
+
+    private bool isLoading = false;
+    private bool isComponentLoading = true; // Component loading state
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    private JsonResponseDto jsonModel { get; set; }
+
+    private SuperAdminDto loginDto = new SuperAdminDto();
+    [Inject]
+    private HttpClient httpClient { get; set; }
+
+    [Inject]
+    private IMatToaster MatToaster { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate component initialization
+        await Task.Delay(500); // Ya koi actual initialization logic
+        isComponentLoading = false;
+        StateHasChanged();
+    }
+    private async Task OnLogin()
+    {
+        if (loginDto.Email == null || loginDto.Password == null)
+        {
+            MatToaster.Add("Please enter email and password", MatToastType.Danger);
+            return;
+        }
+        else
+        {
+            isLoading = true;
+            var response = await httpClient.PostAsJsonAsync("api/SuperAdmin/SuperAdminLogin", loginDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                MatToaster.Add("Login successful", MatToastType.Success);
+                NavigationManager.NavigateTo($"/superadmin/verifysuperadmin/{loginDto.Email}");
+            }
+            else
+            {
+                isLoading = false;
+                MatToaster.Add("Login failed", MatToastType.Danger);
+            }
+        }
+    }
+
+}

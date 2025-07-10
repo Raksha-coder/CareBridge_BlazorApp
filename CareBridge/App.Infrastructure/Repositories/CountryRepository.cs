@@ -9,7 +9,7 @@ namespace App.Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
 
-        
+
         public CountryRepository(AppDbContext context)
         {
             _context = context;

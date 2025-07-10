@@ -7,14 +7,15 @@ using Microsoft.Extensions.Logging;
 
 namespace App.Infrastructure.Repositories
 {
-    public class AppoinmentRepository : IAppoinmentRepository
+    public class AppoinmentRepository : BaseRepository<Appoinment>, IAppoinmentRepository
     {
-        private readonly AppDbContext _context;
+        private readonly _context;
         private readonly ILogger<AppoinmentRepository> _logger;
-        public AppoinmentRepository(AppDbContext context, ILogger<AppoinmentRepository> logger)
+        public AppoinmentRepository(AppDbContext context, ILogger<AppoinmentRepository> logger, IAppoinmentRepository appoinmentRepository)
         {
             _context = context;
             _logger = logger;
+            _appoinmentRepository = appoinmentRepository;
         }
 
         public async Task<JsonResponseDto> BookAppoinmentAsync(AppoinmentDto appoinmentDto)

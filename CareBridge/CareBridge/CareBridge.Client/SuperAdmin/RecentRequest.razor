@@ -1,0 +1,109 @@
+﻿@page "/superadmin/recentrequests"
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<PageTitle>RecentRequest</PageTitle>
+
+<div class="container">
+    <div class="mb-3">
+        <MatButton Outlined="true" OnClick="@ShowRecentRequests">Recent Requests</MatButton>
+        <MatButton Outlined="true" OnClick="@ShowAllocatedDatabases">Allocated Databases</MatButton>
+    </div>
+
+    @if (tasks != null)
+    {
+        <MatTable Items="tasks" class="mat-elevation-z5" AllowSelection="true">
+            <MatTableHeader>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.TenantID</td>
+                <td>@context.OrganizationName</td>
+                <td>@context.Description</td>
+                <td>
+                    <MatButton OnClick="@(() => UpdateByIdAsync(context.TenantID))" Outlined="true" Class="mat-primary">Approved</MatButton>
+                    <MatButton OnClick="@(() => DeleteById(context.TenantID))" Outlined="true" Class="mat-warn">Reject</MatButton>
+                </td>
+            </MatTableRow>
+        </MatTable>
+
+        <MatDialog @bind-IsOpen="isDeleteDialogOpen">
+            <MatDialogTitle>Confirm Delete</MatDialogTitle>
+            <MatDialogContent>
+                Are you sure you want to delete this request?
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton OnClick="DeleteConfirmed" Class="mat-warn">Yes</MatButton>
+                <MatButton OnClick="CancelDelete">No</MatButton>
+            </MatDialogActions>
+        </MatDialog>
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+
+
+</div>
+
+@code {
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    private JsonResponseDto jsonResponseDto { get; set; }
+
+    private List<OrganizationRequestDto> tasks;
+    private bool isDeleteDialogOpen = false;
+    private int deleteId;
+    protected override async Task OnInitializedAsync()
+    {
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/OrganizationRequest/GetAllOrganizationRequestHasNotApproved");
+        tasks = jsonResponseDto?.Data as List<OrganizationRequestDto>;
+    }
+
+    private async Task UpdateByIdAsync(int id)
+    {
+        await Http.PostAsJsonAsync($"api/OrganizationRequest/ApproveOrganizationRequest/{id}", new { TenantID = id });
+    }
+
+    private void DeleteById(int id)
+    {
+        // TODO: Implement delete logic (e.g., call API to delete and refresh list)
+    }
+    private void ShowRecentRequests()
+    {
+        Navigation.NavigateTo("/superadmin/recentrequests");
+    }
+
+    private void ShowAllocatedDatabases()
+    {
+        Navigation.NavigateTo("/superadmin/superadmindashboard");
+    }
+    private void ConfirmDelete(int id)
+    {
+        deleteId = id;
+        isDeleteDialogOpen = true;
+    }
+
+    private async void DeleteConfirmed()
+    {
+        isDeleteDialogOpen = false;
+        // Call your API to delete
+        await Http.DeleteAsync($"api/OrganizationRequest/DeleteOrganizationRequest/{deleteId}");
+        // Refresh the list
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/OrganizationRequest/GetAllOrganizationRequestHasNotApproved");
+        tasks = jsonResponseDto?.Data as List<OrganizationRequestDto>;
+        StateHasChanged();
+    }
+
+    private void CancelDelete()
+    {
+        isDeleteDialogOpen = false;
+    }
+}

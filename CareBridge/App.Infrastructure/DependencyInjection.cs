@@ -1,5 +1,6 @@
 ﻿using App.Application.DTOs;
 using App.Application.Interfaces;
+using App.Application.Interfaces.DbContext;
 using App.Application.Interfaces.Repositories;
 using App.Application.Interfaces.Services;
 using App.Application.Services;
@@ -26,10 +27,16 @@ namespace App.Infrastructure
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IStateService, StateService>();
+            services.AddScoped<ISuperAdminRepository, SuperAdminRepository>();
+            services.AddScoped<ISuperAdminService, Application.Interfaces.Services.SuperAdminService>();
+            services.AddScoped<IOrganizationRequestRepository, OrganizationRequestRepository>();
+            services.AddScoped<IOrganizationRequestService, OrganizationRequestService>();
+            services.AddScoped<IMasterDbContext, MasterDbContext>();
             services.AddScoped<UserState>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+
             //services.AddSingleton<Func<IServiceProvider, string>>(sp =>
             //{
             //    var configDb = sp.GetRequiredService<MasterDbContext>();
@@ -55,6 +62,11 @@ namespace App.Infrastructure
             services.AddDbContext<AppDbContext>((provide, options) =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.AddDbContext<MasterDbContext>((provide, options) =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("MasterConnection"));
             });
             return services;
         }

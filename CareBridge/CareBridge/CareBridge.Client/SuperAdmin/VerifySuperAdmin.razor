@@ -1,0 +1,127 @@
+﻿@page "/superadmin/verifysuperadmin/{Email?}"
+@using CareBridge.Client.Auth
+@using System.Net.Http.Headers
+@layout LoginLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+<PageTitle>Verify Account</PageTitle>
+
+<EditForm EditContext="@editContext" OnValidSubmit="VerifyOtp">
+    <DataAnnotationsValidator />
+    <h1>Verify OTP</h1>
+
+    <div class="col-md-6">
+        <MatTextField @bind-Value="@verifyOtpDto.Otp" Outlined="true" Label="OTP" Style="width: 100%;" />
+        <ValidationMessage For="@(() => verifyOtpDto.Otp)" />
+    </div>
+
+    <div class="col-12 mt-3">
+        <MatButton Type="submit" Raised="true" Color="MatButtonColor.Primary" disabled="@(!editContext.Validate())">
+            @if (isLoading)
+            {
+                <div class="top-progress-bar">
+                    <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                </div>
+            }
+            else
+            {
+                <span>Submit</span>
+            }
+        </MatButton>
+    </div>
+    <ValidationSummary />
+    <MatToastContainer />
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public string Email { get; set; }
+
+    private VerifySuperAdminDto verifyOtpDto = new VerifySuperAdminDto();
+
+    private EditContext editContext;
+
+    private JsonResponseDto jsonModel { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public HttpClient Http { get; set; }
+
+    [Inject]
+    public IMatToaster Toaster { get; set; }
+
+    [Inject]
+    private CustomAuthenticationStateProvider AuthStateProvider { get; set; }
+
+    private bool isLoading = false;
+
+    [Inject]
+    private ILocalStorageService LocalStorage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        verifyOtpDto.Email = Email;
+        editContext = new EditContext(verifyOtpDto);
+        editContext.OnFieldChanged += (sender, args) =>
+        {
+            StateHasChanged(); // force refresh when field changes
+        };
+    }
+
+    private async Task VerifyOtp()
+    {
+        if (verifyOtpDto.Otp == null)
+        {
+            Toaster.Add("Please enter OTP", MatToastType.Danger);
+            return;
+        }
+        verifyOtpDto.Email = Email;
+
+        var response = await Http.PostAsJsonAsync<VerifySuperAdminDto>("api/SuperAdmin/VerifySuperAdmin", verifyOtpDto);
+
+        isLoading = true;
+        if (response.IsSuccessStatusCode)
+        {
+            jsonModel = await response.Content.ReadFromJsonAsync<JsonResponseDto>();
+            if (jsonModel != null && jsonModel.Data != null)
+            {
+                // Parse the authentication response
+                var dataString = jsonModel.Data.ToString() ?? "";
+
+                string token = dataString;
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    // Store token in localStorage
+                    await LocalStorage.SetItemAsync("authToken", token);
+
+                    // Set the token in the HttpClient header
+                    Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    // Mark user as authenticated
+                    AuthStateProvider.MarkUserAsAuthenticated(token);
+
+                    Toaster.Add(jsonModel.Message ?? "OTP verified successfully", MatToastType.Success);
+                    NavigationManager.NavigateTo("/patientdashboard");
+                }
+                else
+                {
+                    Toaster.Add("Invalid token received", MatToastType.Danger);
+                }
+            }
+            else
+            {
+                Toaster.Add("Invalid response received", MatToastType.Danger);
+            }
+        }
+        else
+        {
+            isLoading = false;
+            jsonModel = await response.Content.ReadFromJsonAsync<JsonResponseDto>();
+            Toaster.Add(jsonModel?.Message ?? "OTP verification failed.", MatToastType.Danger);
+            return;
+        }
+    }
+
+}
