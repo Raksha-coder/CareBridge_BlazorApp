@@ -17,7 +17,6 @@ namespace CareBridge.Client.Auth
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             var token = await _localStorage.GetItemAsync<string>("authToken");
-
             if (string.IsNullOrEmpty(token))
             {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
@@ -26,21 +25,20 @@ namespace CareBridge.Client.Auth
             if (IsTokenExpired(token))
             {
                 await _localStorage.RemoveItemAsync("authToken");
-                await _localStorage.RemoveItemAsync("userInfo");
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            var claims = ParseClaimsFromJwt(token);
-            var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
-
+            var identity = GetClaimsIdentity(token);
+            var user = new ClaimsPrincipal(identity);
             return new AuthenticationState(user);
         }
 
-        public void MarkUserAsAuthenticated(string token)
+        public async void MarkUserAsAuthenticated(string token)
         {
-            var claims = ParseClaimsFromJwt(token);
-            var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
 
+            await _localStorage.SetItemAsync("authToken", token);
+            var identity = new ClaimsIdentity(token);
+            var user = new ClaimsPrincipal(identity);
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
@@ -50,11 +48,12 @@ namespace CareBridge.Client.Auth
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
-        private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+        private ClaimsIdentity GetClaimsIdentity(string token)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadJwtToken(jwt);
-            return jsonToken.Claims;
+            var header = new JwtSecurityTokenHandler();
+            var jwtToken = header.ReadJwtToken(token);
+            var claims = jwtToken.Claims;
+            return new ClaimsIdentity(claims, "jwt");
         }
 
         private static bool IsTokenExpired(string token)

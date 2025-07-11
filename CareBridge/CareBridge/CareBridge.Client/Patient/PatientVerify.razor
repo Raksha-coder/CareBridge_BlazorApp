@@ -2,6 +2,7 @@
 @using CareBridge.Client.Auth
 @using System.Net.Http.Headers
 @page "/verifyaccount/{Username?}"
+@layout LoginLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>Verify Account</PageTitle>
@@ -55,8 +56,10 @@
     [Inject]
     public IMatToaster Toaster { get; set; }
 
+    // [Inject]
+    // private CustomAuthenticationStateProvider AuthStateProvider { get; set; }
     [Inject]
-    private CustomAuthenticationStateProvider AuthStateProvider { get; set; }
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
     private bool isLoading = false;
 
@@ -97,17 +100,9 @@
 
                 if (!string.IsNullOrEmpty(token))
                 {
-                    // Store token in localStorage
-                    await LocalStorage.SetItemAsync("authToken", token);
-
-                    // Set the token in the HttpClient header
-                    Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-
-                    // Mark user as authenticated
-                    AuthStateProvider.MarkUserAsAuthenticated(token);
-
-                    Toaster.Add(jsonModel.Message ?? "OTP verified successfully", MatToastType.Success);
+                    Toaster.Add("OTP verified successfully", MatToastType.Success);
+                    ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(token);
+                    // Redirect to home page
                     NavigationManager.NavigateTo("/patientdashboard");
                 }
                 else

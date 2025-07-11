@@ -1,8 +1,10 @@
 ﻿using App.Application.DTOs;
+using App.Application.Interfaces.Repositories;
+using App.Domain.Entities;
 
 namespace App.Application.Interfaces.Services
 {
-    public interface IAppoinmentService
+    public interface IAppoinmentService : IBaseRepository<Appoinment>
     {
         Task<JsonResponseDto> GetAppoinmenByStaffIdAsync(int staffId);
         Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId);

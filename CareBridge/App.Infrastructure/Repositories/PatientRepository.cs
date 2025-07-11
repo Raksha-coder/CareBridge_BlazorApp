@@ -169,7 +169,8 @@ namespace App.Infrastructure.Repositories
                     CreatedBy = "Admin",
                     CreatedDate = DateTime.Now,
                     IsActive = true,
-                    IsDeleted = false
+                    IsDeleted = false,
+                    URI = new Guid()
                 };
                 await _context.Patient.AddAsync(addPatient);
                 await _context.SaveChangesAsync();

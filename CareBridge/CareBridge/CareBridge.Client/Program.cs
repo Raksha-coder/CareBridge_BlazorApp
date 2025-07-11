@@ -29,10 +29,11 @@ builder.Services.AddMatBlazor();
 // Blazored LocalStorage
 builder.Services.AddBlazoredLocalStorage();
 
+builder.Services.AddScoped<CascadingAuthenticationState>();
 
 // Authentication
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<CustomAuthenticationStateProvider>());
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddAuthorizationCore();
 
 // Register LoaderService for client-side

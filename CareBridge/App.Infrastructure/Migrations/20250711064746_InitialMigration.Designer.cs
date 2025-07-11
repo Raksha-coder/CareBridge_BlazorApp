@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250709051534_InitialMigration")]
+    [Migration("20250711064746_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -212,6 +212,9 @@ namespace App.Infrastructure.Migrations
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("URI")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -339,6 +342,9 @@ namespace App.Infrastructure.Migrations
 
                     b.Property<int>("StateId")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("URI")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Username")
                         .IsRequired()

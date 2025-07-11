@@ -209,6 +209,9 @@ namespace App.Infrastructure.Migrations
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("URI")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -336,6 +339,9 @@ namespace App.Infrastructure.Migrations
 
                     b.Property<int>("StateId")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("URI")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Username")
                         .IsRequired()

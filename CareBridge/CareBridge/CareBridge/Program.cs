@@ -1,15 +1,26 @@
 using System.Text;
 using App.Infrastructure;
+using Blazored.LocalStorage;
 using CareBridge.Auth;
+using CareBridge.Client.Auth;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 // Add services to the container.
+
+// Serilog configuration
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
 
 builder.Services.AddMatBlazor();
 
@@ -41,10 +52,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddHttpClient();
 
 // Add Authorization
-builder.Services.AddAuthorizationCore();
-
+builder.Services.AddAuthentication();
+// Added Cascading Parameter
+builder.Services.AddScoped<CascadingAuthenticationState>();
+// Blazored LocalStorage
+builder.Services.AddBlazoredLocalStorage();
 // Add Authentication State Provider for server-side
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+// Authentication
 
 // Loader Service
 
@@ -78,10 +93,10 @@ else
 
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseCors();
 app.MapControllers();
 app.MapRazorComponents<CareBridge.Components.App>()
