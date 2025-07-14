@@ -60,7 +60,6 @@ namespace App.Infrastructure.Repositories
                 throw new Exception("An error occurred while processing your request.");
             }
         }
-
         public async Task<List<StaffRegistrationDto>> GetAllStaffAsync()
         {
             try
@@ -82,7 +81,7 @@ namespace App.Infrastructure.Repositories
             }
         }
 
-        public async Task<StaffRegistrationDto> GetStaffByIdAsync(int staffId)
+        public async Task<JsonResponseDto> GetStaffByIdAsync(int staffId)
         {
             try
             {
@@ -94,7 +93,7 @@ namespace App.Infrastructure.Repositories
                     throw new Exception("Staff not found.");
                 }
                 _logger.LogInformation("Retrived Staff.");
-                return (checkStaff.Adapt<StaffRegistrationDto>());
+                return new JsonResponseDto(200, "Staff", checkStaff.Adapt<StaffRegistrationDto>());
             }
             catch (Exception ex)
             {
@@ -268,7 +267,7 @@ namespace App.Infrastructure.Repositories
                 var claim = new[]
                  {
                 new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                new Claim("PatientId", userExist.PatientId.ToString()),
+                new Claim("StaffId", userExist.PatientId.ToString()),
                 new Claim("Username", userExist.Username),
                 new Claim("Email", userExist.Email),
                 new Claim(ClaimTypes.Role,selectrole.RoleName)

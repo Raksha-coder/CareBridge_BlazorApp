@@ -32,8 +32,6 @@ namespace App.Infrastructure
             services.AddScoped<IOrganizationRequestRepository, OrganizationRequestRepository>();
             services.AddScoped<IOrganizationRequestService, OrganizationRequestService>();
             services.AddScoped<IMasterDbContext, MasterDbContext>();
-            services.AddScoped<UserState>();
-
             services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
 

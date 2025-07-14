@@ -20,33 +20,7 @@ namespace App.Application.Services
 
         public async Task<JsonResponseDto> BookAppoinmentAsync(AppoinmentDto appoinmentDto)
         {
-            try
-            {
-                var bookAppoinment = await _context.Appoinment.FirstOrDefaultAsync(a => a.Id == appoinmentDto.Id);
-                if (bookAppoinment != null)
-                {
-                    _logger.LogInformation("Appoinment Already Exists");
-                    return new JsonResponseDto(400, "Appoinment Already Exists", null);
-                }
-
-                var newAppoinment = new Appoinment
-                {
-                    Id = appoinmentDto.Id,
-                    PatientId = appoinmentDto.PatientId,
-                    StaffId = appoinmentDto.StaffId,
-                    Status = AppointmentStatus.Pending,
-                    Date = appoinmentDto.Date,
-                    StartTime = appoinmentDto.StartTime,
-                    EndTime = appoinmentDto.EndTime,
-                    Reason = appoinmentDto.Reason
-                };
-                await _context.Appoinment.AddAsync(newAppoinment);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while booking appoinment.");
-                return new JsonResponseDto(500, "Internal Server Error", null);
-            }
+            return new JsonResponseDto(500, "Internal Server Error", null);
         }
 
         public Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId)

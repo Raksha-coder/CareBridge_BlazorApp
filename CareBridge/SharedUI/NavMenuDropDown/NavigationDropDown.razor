@@ -1,0 +1,98 @@
+﻿@using MatBlazor
+@using Microsoft.AspNetCore.Components.Web
+@using SharedUI.Layout
+@using Blazored.LocalStorage
+@using System.IdentityModel.Tokens.Jwt
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@inject NavigationManager NavigationManager
+<MatButton Label="Menu" RefBack="@buttonForwardRef" OnClick="@OnClick"></MatButton>
+<MatMenu @ref="menuRef" TargetForwardRef="@buttonForwardRef">
+    <MatList>
+        <MatListItem OnClick="@OnProfileClick">Profile</MatListItem>
+        <MatListItem OnClick="@OnChangePasswordClick">Change Password</MatListItem>
+        <MatListItem OnClick="@Logout">Log Out</MatListItem>
+    </MatList>
+</MatMenu>
+
+@code {
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+
+    ForwardRef buttonForwardRef = new ForwardRef();
+    BaseMatMenu menuRef;
+
+    [Parameter]
+    public int Id { get; set; } = 0;
+
+    private int roleId = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await localStorageService.GetItemAsync<string>("authToken");
+        if (!string.IsNullOrEmpty(token))
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            // Access claims
+            var email = jwtToken.Claims.FirstOrDefault(c => c.Type == "Email")?.Value;
+            var Username = jwtToken.Claims.FirstOrDefault(c => c.Type == "Username")?.Value;
+            var roleid = jwtToken.Claims.FirstOrDefault(c => c.Type == "RoleId")?.Value;
+            roleId = Convert.ToInt32(roleid);
+            if (roleId == 1)
+            {
+                var staffId = jwtToken.Claims.FirstOrDefault(c => c.Type == "StaffId")?.Value;
+                Id = Convert.ToInt32(staffId);
+            }
+            else
+            if (roleId == 3)
+            {
+                var patientId = jwtToken.Claims.FirstOrDefault(c => c.Type == "PatientId")?.Value;
+                Id = Convert.ToInt32(patientId);
+            }
+
+        }
+    }
+
+    public void Logout()
+    {
+        localStorageService.RemoveItemAsync("authToken");
+        NavigationManager.NavigateTo("/logout");
+    }
+
+    public void OnChangePasswordClick()
+    {
+        if (roleId == 1)
+        {
+            // NavigationManager.NavigateTo($"/Staff/ChangePassword/{Id}");
+        }
+        else
+        if (roleId == 3)
+        {
+            // NavigationManager.NavigateTo($"/Patient/ChangePassword/{Id}");
+        }
+    }
+
+    public void OnProfileClick()
+    {
+        if (roleId == 1)
+        {
+            NavigationManager.NavigateTo($"/Staff/StaffProfile/{Id}");
+        }
+        else
+        if (roleId == 3)
+        {
+            NavigationManager.NavigateTo($"/Patient/PatientProfile/{Id:int}");
+        }
+    }
+
+
+    public async Task OnClick(MouseEventArgs e)
+    {
+        if (menuRef != null)
+        {
+            await menuRef.OpenAsync();
+        }
+    }
+
+}

@@ -8,7 +8,7 @@ namespace App.Application.Interfaces.Services
         public Task<JsonResponseDto> VerifyOtpAsync(VerifyOtpDto verifyOtpDto);
         public Task<JsonResponseDto> LoginStaffAsync(LoginDto loginDto);
         Task<List<StaffRegistrationDto>> GetAllStaffAsync();
-        public Task<StaffRegistrationDto> GetStaffByIdAsync(int staffId);
+        public Task<JsonResponseDto> GetStaffByIdAsync(int staffId);
         public Task<JsonResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
     }
 }

@@ -36,7 +36,6 @@ namespace App.Infrastructure.Repositories
                 throw new Exception("An error occurred while fetching state data.");
             }
         }
-
         public async Task<JsonResponseDto> GetStateByCountryIdAsync(int id)
         {
             try

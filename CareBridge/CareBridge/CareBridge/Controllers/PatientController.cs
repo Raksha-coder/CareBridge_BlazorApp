@@ -15,31 +15,38 @@ namespace CareBridge.Controllers
             _patientService = patientService;
         }
 
-        [HttpPost("RegisterPatient")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> RegisterPatient(PatientRegisterDto registerDto)
         {
             var result = await _patientService.RegisterPatientAsync(registerDto);
             return Ok(result);
         }
 
-        [HttpPost("VerifyOtp")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto verifyOtpDto)
         {
             var result = await _patientService.VerifyOtpAsync(verifyOtpDto);
             return Ok(result);
         }
 
-        [HttpPost("LoginPatient")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> LoginPatient([FromBody] LoginDto loginDto)
         {
             var result = await _patientService.LoginPatientAsync(loginDto);
             return Ok(result);
         }
 
-        [HttpPost("ForgotPassword")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
         {
             var result = await _patientService.ForgotPasswordAsync(forgotPasswordDto);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetPatientById(int id)
+        {
+            var result = await _patientService.GetPatientByIdAsync(id);
             return Ok(result);
         }
     }

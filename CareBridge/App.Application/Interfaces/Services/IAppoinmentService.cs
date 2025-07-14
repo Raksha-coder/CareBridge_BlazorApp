@@ -4,7 +4,7 @@ using App.Domain.Entities;
 
 namespace App.Application.Interfaces.Services
 {
-    public interface IAppoinmentService : IBaseRepository<Appoinment>
+    public interface IAppoinmentService
     {
         Task<JsonResponseDto> GetAppoinmenByStaffIdAsync(int staffId);
         Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId);

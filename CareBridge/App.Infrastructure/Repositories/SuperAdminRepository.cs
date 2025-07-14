@@ -57,7 +57,6 @@ namespace App.Infrastructure.Repositories
                 throw new Exception("An error occurred while logging in.");
             }
         }
-
         public async Task<JsonResponseDto> VerifySuperAdmin(VerifySuperAdminDto verifySuperAdmin)
         {
             try

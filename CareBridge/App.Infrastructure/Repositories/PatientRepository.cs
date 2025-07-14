@@ -57,10 +57,23 @@ namespace App.Infrastructure.Repositories
                 return new JsonResponseDto(500, "Internal Server Error", null);
             }
         }
-
-        public Task<JsonResponseDto> GetPatientByIdAsync(int patientId)
+        public async Task<JsonResponseDto> GetPatientByIdAsync(int patientId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var checkId = await _context.Patient.Where(a => a.Id == patientId && a.IsActive == true && a.IsDeleted == false).FirstOrDefaultAsync();
+                if (checkId == null)
+                {
+                    _logger.LogWarning("Patient not found.");
+                    return new JsonResponseDto(404, "Patient not found", null);
+                }
+                return new JsonResponseDto(200, "Patient found", checkId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetPatientByIdAsync");
+                return new JsonResponseDto(500, "Internal Server Error", null);
+            }
         }
 
         public async Task<JsonResponseDto> LoginPatientAsync(LoginDto loginDto)
@@ -229,7 +242,7 @@ namespace App.Infrastructure.Repositories
                 new Claim("PatientId", userExist.PatientId.ToString()),
                 new Claim("Username", userExist.Username),
                 new Claim("Email", userExist.Email),
-                new Claim(ClaimTypes.Role,selectrole.RoleName)
+                new Claim("Role",selectrole.Id.ToString())
             };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
                 var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

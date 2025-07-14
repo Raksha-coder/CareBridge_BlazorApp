@@ -7,15 +7,14 @@ using Microsoft.Extensions.Logging;
 
 namespace App.Infrastructure.Repositories
 {
-    public class AppoinmentRepository : BaseRepository<Appoinment>, IAppoinmentRepository
+    public class AppoinmentRepository : IAppoinmentRepository
     {
-        private readonly _context;
+        private readonly AppDbContext _context;
         private readonly ILogger<AppoinmentRepository> _logger;
-        public AppoinmentRepository(AppDbContext context, ILogger<AppoinmentRepository> logger, IAppoinmentRepository appoinmentRepository)
+        public AppoinmentRepository(AppDbContext context, ILogger<AppoinmentRepository> logger)
         {
             _context = context;
             _logger = logger;
-            _appoinmentRepository = appoinmentRepository;
         }
 
         public async Task<JsonResponseDto> BookAppoinmentAsync(AppoinmentDto appoinmentDto)
@@ -52,7 +51,6 @@ namespace App.Infrastructure.Repositories
             }
 
         }
-
         public async Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId)
         {
             try

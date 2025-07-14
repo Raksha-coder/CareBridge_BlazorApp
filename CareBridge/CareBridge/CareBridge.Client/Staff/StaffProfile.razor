@@ -1,0 +1,150 @@
+﻿@page "/Staff/StaffProfile/{Id?}"
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+<PageTitle>PatientProfile</PageTitle>
+<MatCard>
+    <MatHeadline1>
+        Patient Profile
+    </MatHeadline1>
+    <MatCardContent>
+        <EditForm Model="@staff" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatTextField Label="First Name" @bind-Value="staff.FirstName" MaxLength="50" />
+                </div>
+                <div class="col-6">
+                    <MatTextField Label="Last Name" @bind-Value="staff.LastName" MaxLength="50" />
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatTextField Label="Email" @bind-Value="staff.Email" MaxLength="100" Type="email" />
+                </div>
+                <div class="col-6">
+                    <MatTextField Label="Mobile" @bind-Value="staff.PhoneNo" Type="tel" />
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatDatePicker Label="Date of Birth" @bind-Value="staff.DOB" />
+                </div>
+                <div class="col-6">
+                    @if (Roles != null)
+                    {
+                        <MatSelect @bind-Value="@staff.RoleId" Label="Role" Outlined="true">
+                            @foreach (var item in Roles)
+                            {
+                                <MatOption Value="@item.Id">@item.RoleName</MatOption>
+                            }
+                        </MatSelect>
+                    }
+                    else
+                    {
+                        <p>Loading Roles...</p>
+                    }
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatTextField Label="Gender" @bind-Value="staff.Gender" Required="true" />
+                </div>
+                <div class="col-6">
+                    @if (Countries != null && Countries.Any())
+                    {
+                        <MatSelect @bind-Value="@staff.CountryId" Label="Country" Outlined="true">
+                            @foreach (var item in Countries)
+                            {
+                                <MatOption Value="@item.CountryId"> @item.Name</MatOption>
+                            }
+                        </MatSelect>
+                    }
+                    else
+                    {
+                        <p>Loading Country...</p>
+                    }
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    @if (States != null)
+                    {
+                        <MatSelect @bind-Value="@staff.StateId" Label="State" Outlined="true">
+                            @foreach (var item in States)
+                            {
+                                <MatOption Value="@item.StateId">@item.StateName</MatOption>
+                            }
+                        </MatSelect>
+                    }
+                    else
+                    {
+                        <p>Loading states...</p>
+                    }
+                </div>
+                <div class="col-6">
+                    <MatTextField @bind-Value="@staff.City" Outlined="true" Label="Enter  City"></MatTextField>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatTextField @bind-Value="@staff.Address" Outlined="true" Label="Enter  Address"></MatTextField>
+                </div>
+
+                <div class="col-6">
+                    <MatTextField @bind-Value="@staff.Department" Outlined="true" Label="Enter Department "></MatTextField>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatTextField @bind-Value="@staff.Designation" Outlined="true" Label="Enter Designation"></MatTextField>
+                </div>
+                <div class="col-6">
+                    <MatDatePicker TValue="DateTime" @bind-Value="@staff.JoiningDate" Outlined="true" Label="Enter Joining Date"></MatDatePicker>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-6">
+                    <MatButton Type="submit" Raised="true">Save</MatButton>
+                </div>
+            </div>
+            <!-- Add MatSelect for StateId and CountryId as needed -->
+        </EditForm>
+    </MatCardContent>
+</MatCard>
+
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private StaffRegistrationDto staff = new StaffRegistrationDto();
+
+
+    private List<Country> Countries { get; set; }
+
+    private List<State> States { get; set; }
+    private JsonResponseDto JsonResponseDto { get; set; }
+    public List<Role> Roles { get; set; }
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        Roles = await HttpClient.GetFromJsonAsync<List<Role>>("api/Role/GetAllRoles");
+        Countries = await HttpClient.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries") ?? new List<Country>();
+        States = await HttpClient.GetFromJsonAsync<List<State>>("api/State/GetAllStates") ?? new List<State>();
+        JsonResponseDto = await HttpClient.GetFromJsonAsync<JsonResponseDto>($"Patient/GetPatientProfile/{Id}");
+
+        if (JsonResponseDto.Data is StaffRegistrationDto staffRegistration)
+        {
+            staff = staffRegistration;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+
+    }
+}

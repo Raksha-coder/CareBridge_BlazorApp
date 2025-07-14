@@ -3,7 +3,7 @@ using App.Domain.Entities;
 
 namespace App.Application.Interfaces.Repositories
 {
-    public interface IAppoinmentRepository
+    public interface IAppoinmentRepository 
     {
         Task<JsonResponseDto> GetAppoinmenByStaffIdAsync(int staffId);
         Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId);
