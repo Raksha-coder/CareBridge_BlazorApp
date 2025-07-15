@@ -33,6 +33,11 @@ namespace App.Application.Services
             return _patientRepository.RegisterPatientAsync(registerDto);
         }
 
+        public Task<JsonResponseDto> UpdatePatientAsync(PatientRegisterDto updatePatientDto)
+        {
+            return _patientRepository.UpdatePatientAsync(updatePatientDto);
+        }
+
         public Task<JsonResponseDto> VerifyOtpAsync(VerifyOtpDto verifyOtpDto)
         {
             return _patientRepository.VerifyOtpAsync(verifyOtpDto);

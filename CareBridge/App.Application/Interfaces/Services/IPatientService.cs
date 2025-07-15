@@ -9,5 +9,7 @@ namespace App.Application.Interfaces.Services
         public Task<JsonResponseDto> LoginPatientAsync(LoginDto loginDto);
         public Task<JsonResponseDto> GetPatientByIdAsync(int patientId);
         public Task<JsonResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPassword);
+        Task<JsonResponseDto> UpdatePatientAsync(PatientRegisterDto updatePatientDto);
+
     }
 }

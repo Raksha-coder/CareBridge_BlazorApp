@@ -5,11 +5,18 @@
 
 <PageTitle>PatientDashboard</PageTitle>
 
+
+
 <div class="dashboard-container">
     <header class="page-header">
         <h1>Welcome to Patient Dashboard</h1>
     </header>
-
+    <div class="appointment-buttons">
+        <MatButton class="appointment-btn" Raised="true" Color="MatButtonColor.Primary" OnClick="@ShowPreviousAppointments">Previous Appointment</MatButton>
+        <MatButton class="appointment-btn" Raised="true" Color="MatButtonColor.Secondary" OnClick="@ShowUpcomingAppointments">Upcoming Appointment</MatButton>
+        <MatButton class="appointment-btn" Raised="true" Color="MatButtonColor.Info" OnClick="@ShowTodaysAppointments">Today's Appointment</MatButton>
+    </div>
+    <br />
     @if (staff != null && staff.Any())
     {
         <div class="doctor-grid">
@@ -63,7 +70,20 @@
     {
         NavigationManager.NavigateTo($"/Appoinment/BookAppoinment/{id}");
     }
+    private void ShowPreviousAppointments()
+    {
+        NavigationManager.NavigateTo("/Appoinment/PatientPreviousAppoinment");
+    }
 
+    private void ShowUpcomingAppointments()
+    {
+        NavigationManager.NavigateTo("/Appoinment/PatientUpcomingAppoinment");
+    }
+
+    private void ShowTodaysAppointments()
+    {
+        NavigationManager.NavigateTo("/Appoinment/PatientTodayAppoinment");
+    }
 
 
 }

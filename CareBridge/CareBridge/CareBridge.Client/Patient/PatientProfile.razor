@@ -1,25 +1,28 @@
 ﻿@page "/Patient/PatientProfile/{Id:int}"
+@using System.Text.Json
 @layout MainLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 <PageTitle>PatientProfile</PageTitle>
+
+<MatButtonLink Href="/patientdashboard"><MatIcon Icon="arrow_back"></MatIcon> Back</MatButtonLink>
 <MatCard>
-    <MatHeadline1>
+    <MatHeadline6>
         Patient Profile
-    </MatHeadline1>
+    </MatHeadline6>
     <MatCardContent>
         <EditForm Model="@patient" OnValidSubmit="HandleValidSubmit">
             <DataAnnotationsValidator />
             <div class="row mt-3">
                 <div class="col-6">
-                    <MatTextField Label="First Name" @bind-Value="patient.FirstName" MaxLength="50" />
+                    <MatTextField Label="First  Name" Outlined="true" @bind-Value="patient.FirstName" MaxLength="50" />
                 </div>
                 <div class="col-6">
-                    <MatTextField Label="Last Name" @bind-Value="patient.LastName" MaxLength="50" />
+                    <MatTextField Label="Last Name" Outlined="true" @bind-Value="patient.LastName" MaxLength="50" />
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-6">
-                    <MatTextField Label="Email" @bind-Value="patient.Email" MaxLength="100" Type="email" />
+                    <MatTextField Label="Email" Outlined="true" @bind-Value="patient.Email" MaxLength="100" Type="email" />
                 </div>
                 <div class="col-6">
                     <MatTextField Label="Mobile" @bind-Value="patient.Mobile" Type="tel" />
@@ -27,15 +30,15 @@
             </div>
             <div class="row mt-3">
                 <div class="col-6">
-                    <MatTextField Label="Blood Group" @bind-Value="patient.BloodGroup" MaxLength="5" />
+                    <MatTextField Label="Blood Group" Outlined="true" @bind-Value="patient.BloodGroup" MaxLength="5" />
                 </div>
                 <div class="col-6">
-                    <MatDatePicker Label="Date of Birth" @bind-Value="patient.DOB" />
+                    <MatDatePicker Label="Date of Birth" Outlined="true" @bind-Value="patient.DOB" />
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-6">
-                    <MatTextField Label="Gender" @bind-Value="patient.Gender" Required="true" />
+                    <MatTextField Label="Gender" Outlined="true" @bind-Value="patient.Gender" Required="true" />
                 </div>
                 <div class="col-6">
                     @if (Countries != null && Countries.Any())
@@ -82,8 +85,8 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col-6">
-                    <MatButton Type="submit" Raised="true">Save</MatButton>
+                <div class="col-6 centered-mat-button">
+                    <MatButton Class="large-mat-button" Type="submit" Raised="true">Save</MatButton>
                 </div>
             </div>
             <!-- Add MatSelect for StateId and CountryId as needed -->
@@ -96,31 +99,51 @@
     [Inject]
     private HttpClient HttpClient { get; set; }
 
+    [Inject]
+    private NavigationManager Navigation { get; set; }
+
     private JsonResponseDto JsonResponseDto { get; set; }
 
     [Parameter]
     public int Id { get; set; }
 
-    private Patient patient = new Patient();
-
+    private PatientRegisterDto patient = new PatientRegisterDto();
 
     private List<Country> Countries { get; set; }
+
+    [Inject]
+    private IMatToaster Toaster { get; set; }
 
     private List<State> States { get; set; }
     private async Task HandleValidSubmit()
     {
-
+        var response = await HttpClient.PostAsJsonAsync("api/Patient/UpdatePatient", patient);
+        if (response.IsSuccessStatusCode)
+        {
+            Toaster.Add("Patient Updated Successfully", MatToastType.Success);
+            Navigation.NavigateTo("/patientdashboard");
+        }
+        else
+        {
+            Toaster.Add("Something went wrong", MatToastType.Danger);
+        }
     }
 
     protected async override Task OnInitializedAsync()
     {
         Countries = await HttpClient.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries") ?? new List<Country>();
         States = await HttpClient.GetFromJsonAsync<List<State>>("api/State/GetAllStates") ?? new List<State>();
-        JsonResponseDto = await HttpClient.GetFromJsonAsync<JsonResponseDto>($"Patient/GetPatientById/{Id}");
+        JsonResponseDto = await HttpClient.GetFromJsonAsync<JsonResponseDto>($"api/Patient/GetPatientById/{Id}");
 
-        if (JsonResponseDto?.Data is Patient patientData)
+        @if (JsonResponseDto != null && JsonResponseDto.Data != null)
         {
-            patient = patientData;
+            var json = JsonResponseDto.Data.ToString();
+            patient = JsonSerializer.Deserialize<PatientRegisterDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            // Log the patient object as JSON
+            Console.WriteLine($"Patient Data: {JsonSerializer.Serialize(patient)}");
+
         }
     }
+
+
 }

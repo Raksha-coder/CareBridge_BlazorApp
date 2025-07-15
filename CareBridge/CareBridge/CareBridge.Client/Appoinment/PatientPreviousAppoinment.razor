@@ -1,0 +1,57 @@
+﻿@page "/Appoinment/PatientPreviousAppoinment"
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
+
+<div class="dashboard-container">
+    <header class="page-header">
+        <h1>PatientPreviousAppoinment</h1>
+    </header>
+    @if (staff != null && staff.Any())
+    {
+        <div class="doctor-grid">
+            @foreach (var doc in staff)
+            {
+                <MatCard class="doctor-card">
+                    <div class="doctor-card-header">
+                        <MatHeadline6 class="demo-mat-card-clean-margin">
+                            @doc.FirstName @doc.LastName
+                        </MatHeadline6>
+                        <MatSubtitle2 class="demo-mat-card-clean-margin">
+                            @doc.Designation – @doc.Department
+                        </MatSubtitle2>
+                    </div>
+                    <MatCardContent class="doctor-card-body">
+                        <MatBody2 class="demo-mat-card-clean-margin">
+                            <p><strong>Email:</strong> @doc.Email</p>
+                            <p><strong>Phone No:</strong> @doc.PhoneNo</p>
+                            <p><strong>Gender:</strong> @doc.Gender</p>
+                            <p><strong>Address:</strong> @doc.Address</p>
+                        </MatBody2>
+                    </MatCardContent>
+                    <MatCardActions class="doctor-card-actions">
+                    </MatCardActions>
+                </MatCard>
+            }
+        </div>
+    }
+    else
+    {
+        <h2 class="no-doctors">No Doctors Found</h2>
+    }
+</div>
+@code {
+    [Inject]
+    private NavigationManager? NavigationManager { get; set; }
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    // private List<StaffRegistrationDto> staff = new List<StaffRegistrationDto>();
+
+    private JsonResponseDto? jsonResponseDto;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/Appoinment/GetAppoinmenByStaffId");
+    }
+}

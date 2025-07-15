@@ -16,11 +16,33 @@ namespace CareBridge.Controllers
             _appoinmentService = appoinmentService;
         }
 
-        [HttpPost("BookAppoinment")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> BookAppoinment([FromBody] AppoinmentDto bookAppoinmentDto)
         {
             var result = await _appoinmentService.BookAppoinmentAsync(bookAppoinmentDto);
             return Ok(result);
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAppoinmenByStaffId(int staffId)
+        {
+            var result = await _appoinmentService.GetAppoinmenByStaffIdAsync(staffId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAppoinmentByPatientId(int staffId)
+        {
+            var result = await _appoinmentService.GetAppoinmenByPatientIdAsync(staffId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> UpdateAppoinment(AppoinmentDto updateAppoinment)
+        {
+            var result = await _appoinmentService.UpdateAppoinmentAsync(updateAppoinment);
+            return Ok(result);
+        }
+
     }
 }

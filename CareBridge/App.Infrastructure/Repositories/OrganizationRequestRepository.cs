@@ -99,7 +99,7 @@ namespace App.Infrastructure.Repositories
         {
             try
             {
-                var deleteOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.Id == id);
+                var deleteOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.TenantID == id);
                 if (deleteOrganizationRequest == null)
                 {
                     return new JsonResponseDto(404, "Organization request not found.", null);
@@ -192,7 +192,7 @@ namespace App.Infrastructure.Repositories
 
         public async Task<JsonResponseDto> GetOrganizationRequestById(int id)
         {
-            var getOrganizationRequestById = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.Id == id);
+            var getOrganizationRequestById = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.TenantID == id);
             if (getOrganizationRequestById == null)
             {
                 return new JsonResponseDto(404, "Organization request not found.", null);

@@ -7,6 +7,7 @@ using App.Application.Interfaces.Repositories;
 using App.Application.Interfaces.Services;
 using App.Domain.Entities;
 using App.Infrastructure.DBContext;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -61,13 +62,13 @@ namespace App.Infrastructure.Repositories
         {
             try
             {
-                var checkId = await _context.Patient.Where(a => a.Id == patientId && a.IsActive == true && a.IsDeleted == false).FirstOrDefaultAsync();
+                var checkId = await _context.Patient.Where(a => a.PatientId == patientId && a.IsActive == true && a.IsDeleted == false).FirstOrDefaultAsync();
                 if (checkId == null)
                 {
                     _logger.LogWarning("Patient not found.");
                     return new JsonResponseDto(404, "Patient not found", null);
                 }
-                return new JsonResponseDto(200, "Patient found", checkId);
+                return new JsonResponseDto(200, "Patient found", checkId.Adapt<Patient>());
             }
             catch (Exception ex)
             {
@@ -220,6 +221,43 @@ namespace App.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while register patient.");
+                return new JsonResponseDto(500, "Internal Server Error", null);
+            }
+        }
+
+        public async Task<JsonResponseDto> UpdatePatientAsync(PatientRegisterDto updatePatientDto)
+        {
+            try
+            {
+                var checkUserExits = await _context.Patient.Where(x => x.PatientId == updatePatientDto.PatientId).FirstOrDefaultAsync();
+                if (checkUserExits == null)
+                {
+                    _logger.LogWarning("Patient not found.");
+                    return new JsonResponseDto(404, "Patient not found", null);
+                }
+
+                checkUserExits.FirstName = updatePatientDto.FirstName;
+                checkUserExits.LastName = updatePatientDto.LastName;
+                checkUserExits.Email = updatePatientDto.Email;
+                checkUserExits.Mobile = updatePatientDto.Mobile;
+                checkUserExits.BloodGroup = updatePatientDto.BloodGroup;
+                checkUserExits.Gender = updatePatientDto.Gender;
+                checkUserExits.Address = updatePatientDto.Address;
+                checkUserExits.PinCode = updatePatientDto.PinCode;
+                checkUserExits.City = updatePatientDto.City;
+                checkUserExits.StateId = updatePatientDto.StateId;
+                checkUserExits.CountryId = updatePatientDto.CountryId;
+                checkUserExits.DOB = updatePatientDto.DOB;
+                checkUserExits.ModifiedBy = "Admin";
+                checkUserExits.ModifiedDate = DateTime.Now;
+                _context.Patient.Update(checkUserExits);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Patient Updated Successfully.");
+                return new JsonResponseDto(200, "Patient Updated Successfully", null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while update patient.");
                 return new JsonResponseDto(500, "Internal Server Error", null);
             }
         }

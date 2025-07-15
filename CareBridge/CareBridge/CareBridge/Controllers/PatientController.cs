@@ -49,5 +49,12 @@ namespace CareBridge.Controllers
             var result = await _patientService.GetPatientByIdAsync(id);
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> UpdatePatient(PatientRegisterDto updatepatient)
+        {
+            var result = await _patientService.UpdatePatientAsync(updatepatient);
+            return Ok(result);
+        }
     }
 }
