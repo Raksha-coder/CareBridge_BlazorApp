@@ -134,7 +134,7 @@ namespace App.Infrastructure.Repositories
                     _logger.LogWarning("Appoinment Not Found");
                     return new JsonResponseDto(404, "Appoinment Not Found", null);
                 }
-                checkAppoinment.Status = appoinmentDto.Status;
+                //checkAppoinment.Status = appoinmentDto.Status;
                 _context.Appoinment.Update(checkAppoinment);
                 _context.SaveChanges();
                 _logger.LogInformation("Appoinment Updated Successfully");
@@ -148,4 +148,5 @@ namespace App.Infrastructure.Repositories
 
         }
     }
+
 }

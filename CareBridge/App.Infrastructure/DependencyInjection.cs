@@ -31,6 +31,8 @@ namespace App.Infrastructure
             services.AddScoped<ISuperAdminService, Application.Interfaces.Services.SuperAdminService>();
             services.AddScoped<IOrganizationRequestRepository, OrganizationRequestRepository>();
             services.AddScoped<IOrganizationRequestService, OrganizationRequestService>();
+            services.AddScoped<IAppoinmentRepository, AppoinmentRepository>();
+            services.AddScoped<IAppoinmentService, AppoinmentService>();
             services.AddScoped<IMasterDbContext, MasterDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();

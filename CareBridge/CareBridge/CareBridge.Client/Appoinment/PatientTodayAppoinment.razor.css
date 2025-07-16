@@ -1,0 +1,21 @@
+﻿.doctor-cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.doctor-card {
+    min-width: 300px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.appointment-info {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}

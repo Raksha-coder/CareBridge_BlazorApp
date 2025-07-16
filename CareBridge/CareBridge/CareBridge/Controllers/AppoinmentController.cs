@@ -23,17 +23,17 @@ namespace CareBridge.Controllers
             return Ok(result);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{staffId}")]
         public async Task<IActionResult> GetAppoinmenByStaffId(int staffId)
         {
             var result = await _appoinmentService.GetAppoinmenByStaffIdAsync(staffId);
             return Ok(result);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetAppoinmentByPatientId(int staffId)
+        [HttpGet("[action]/{patientId}")]
+        public async Task<IActionResult> GetAppoinmentByPatientId(int patientId)
         {
-            var result = await _appoinmentService.GetAppoinmenByPatientIdAsync(staffId);
+            var result = await _appoinmentService.GetAppoinmenByPatientIdAsync(patientId);
             return Ok(result);
         }
 

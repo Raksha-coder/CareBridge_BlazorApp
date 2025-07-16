@@ -20,7 +20,7 @@ namespace App.Application.Services
 
         public async Task<JsonResponseDto> BookAppoinmentAsync(AppoinmentDto appoinmentDto)
         {
-            return new JsonResponseDto(500, "Internal Server Error", null);
+            return await _appoinmentRepository.BookAppoinmentAsync(appoinmentDto);
         }
 
         public Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId)
@@ -33,9 +33,9 @@ namespace App.Application.Services
             return _appoinmentRepository.GetAppoinmenByStaffIdAsync(staffId);
         }
 
-        public Task<JsonResponseDto> UpdateAppoinmentAsync(AppoinmentDto appoinmentDto)
+        public Task<JsonResponseDto> UpdateAppoinmentAsync(AppoinmentDto appoinment)
         {
-            return _appoinmentRepository.UpdateAppoinmentAsync(appoinmentDto);
+            return _appoinmentRepository.UpdateAppoinmentAsync(appoinment);
         }
     }
 }

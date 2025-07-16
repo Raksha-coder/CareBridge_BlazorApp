@@ -117,9 +117,8 @@
         }
         else
         {
-
             appoinmentDto.StaffId = staffRegistrationDto.Id;
-            await Http.PostAsJsonAsync("/api/Appoinment", appoinmentDto);
+            await Http.PostAsJsonAsync("/api/Appoinment/BookAppoinment", appoinmentDto);
             Toaster.Add("Appoinment Booked Successfully", MatToastType.Success);
             Navigation.NavigateTo("/Appoinment/Payment");
         }

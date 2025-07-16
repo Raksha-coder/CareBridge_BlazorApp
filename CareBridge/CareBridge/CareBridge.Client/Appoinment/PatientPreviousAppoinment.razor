@@ -1,4 +1,5 @@
 ﻿@page "/Appoinment/PatientPreviousAppoinment"
+@using System.Text.Json
 @layout MainLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
 
@@ -6,26 +7,20 @@
     <header class="page-header">
         <h1>PatientPreviousAppoinment</h1>
     </header>
-    @if (staff != null && staff.Any())
+    @if (appoinments != null && appoinments.Any())
     {
         <div class="doctor-grid">
-            @foreach (var doc in staff)
+            @foreach (var doc in appoinments)
             {
                 <MatCard class="doctor-card">
-                    <div class="doctor-card-header">
-                        <MatHeadline6 class="demo-mat-card-clean-margin">
-                            @doc.FirstName @doc.LastName
-                        </MatHeadline6>
-                        <MatSubtitle2 class="demo-mat-card-clean-margin">
-                            @doc.Designation – @doc.Department
-                        </MatSubtitle2>
-                    </div>
                     <MatCardContent class="doctor-card-body">
                         <MatBody2 class="demo-mat-card-clean-margin">
-                            <p><strong>Email:</strong> @doc.Email</p>
-                            <p><strong>Phone No:</strong> @doc.PhoneNo</p>
-                            <p><strong>Gender:</strong> @doc.Gender</p>
-                            <p><strong>Address:</strong> @doc.Address</p>
+                            <p><strong>Email:</strong> @doc.Date</p>
+                            <p><strong>Email:</strong> @doc.StartTime</p>
+                            <p><strong>Email:</strong> @doc.EndTime</p>
+                            <p><strong>Phone No:</strong> @doc.StaffId</p>
+                            <p><strong>Gender:</strong> @doc.Reason</p>
+                            <p><strong>Address:</strong> @doc.Status</p>
                         </MatBody2>
                     </MatCardContent>
                     <MatCardActions class="doctor-card-actions">
@@ -43,6 +38,9 @@
     [Inject]
     private NavigationManager? NavigationManager { get; set; }
 
+
+    private List<Appoinment> appoinments = new List<Appoinment>();
+
     [Inject]
     private HttpClient Http { get; set; }
 
@@ -52,6 +50,17 @@
 
     protected override async Task OnInitializedAsync()
     {
+
+
         jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/Appoinment/GetAppoinmenByStaffId");
+
+        @if (jsonResponseDto != null && jsonResponseDto.Data != null)
+        {
+            var json = jsonResponseDto.Data.ToString();
+            appoinments = JsonSerializer.Deserialize<List<Appoinment>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            // Log the patient object as JSON
+            Console.WriteLine($"Patient Data: {JsonSerializer.Serialize(appoinments)}");
+
+        }
     }
 }

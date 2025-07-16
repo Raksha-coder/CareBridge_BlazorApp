@@ -1,21 +1,113 @@
 ﻿@page "/Appoinment/PatientTodayAppoinment"
+@using System.Text.Json
+@using System.IdentityModel.Tokens.Jwt
 @layout MainLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
-<h3>PatientTodayAppoinment</h3>
+<div class="dashboard-container">
+    <header class="page-header">
+        <h1>PatientTodayAppoinment</h1>
+    </header>
+    @if (appoinments != null && appoinments.Any())
+    {
+        <div class="doctor-grid">
+            @foreach (var doc in appoinments)
+            {
+                <MatCard class="doctor-card">
+                    <MatCardContent class="doctor-card-body">
+                        <MatBody2 class="demo-mat-card-clean-margin">
+                            <p><strong>Email:</strong> @doc.Date</p>
+                            <p><strong>Email:</strong> @doc.StartTime</p>
+                            <p><strong>Email:</strong> @doc.EndTime</p>
+                            @foreach (var staff in doctorDetails)
+                            {
+                                <p><strong>First Name  </strong> @staff.FirstName</p>
+                                <p><strong>Last Name  </strong> @staff.LastName</p>
+                                <p><strong>Designation </strong> @staff.Designation</p>
+                                <p><strong>Department  </strong> @staff.Department</p>
+                                <p><strong>Visiting Charge   </strong> @staff.VisitingCharge</p>
+
+                            }
+                            <p><strong>Gender:</strong> @doc.Reason</p>
+                            <p><strong>Address:</strong> @doc.Status</p>
+                        </MatBody2>
+                    </MatCardContent>
+                    <MatCardActions class="doctor-card-actions">
+                    </MatCardActions>
+                </MatCard>
+            }
+        </div>
+    }
+    else
+    {
+        <h2 class="no-doctors">No Doctors Found</h2>
+    }
+</div>
 
 @code {
     [Inject]
     private NavigationManager? NavigationManager { get; set; }
 
     [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    private List<Appoinment> appoinments = new List<Appoinment>();
+
+    [Inject]
     private HttpClient Http { get; set; }
 
+    [Parameter]
+    public int PatientId { get; set; }
+
+    private int roleId = 0;
     // private List<StaffRegistrationDto> staff = new List<StaffRegistrationDto>();
 
     private JsonResponseDto? jsonResponseDto;
 
+    private List<StaffRegistrationDto> doctorDetails = new List<StaffRegistrationDto>();
+
     protected override async Task OnInitializedAsync()
     {
-        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/Appoinment/GetAppoinmenByStaffId");
+        var token = await localStorageService.GetItemAsync<string>("authToken");
+        if (!string.IsNullOrEmpty(token))
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            var roleid = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+            var id = jwtToken.Claims.First(claim => claim.Type == "PatientId").Value;
+            PatientId = Convert.ToInt32(id);
+            roleId = Convert.ToInt32(roleid);
+            if (roleId == 3)
+            {
+                jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>($"api/Appoinment/GetAppoinmentByPatientId/{PatientId}");
+
+                @if (jsonResponseDto != null && jsonResponseDto.Data != null)
+                {
+                    var json = jsonResponseDto.Data.ToString();
+                    appoinments = JsonSerializer.Deserialize<List<Appoinment>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    // Log the patient object as JSON
+                    Console.WriteLine($"Patient Data: {JsonSerializer.Serialize(appoinments)}");
+
+                    var staffIds = appoinments.Select(a => a.StaffId).Distinct();
+                    foreach (var staffId in staffIds)
+                    {
+                        var doctor = await Http.GetFromJsonAsync<JsonResponseDto>($"api/Staff/GetStaffById/{staffId}");
+
+                        if (doctor != null && doctor.Data != null)
+                        {
+                            var staffJson = doctor.Data.ToString();
+                            var staffMember = JsonSerializer.Deserialize<StaffRegistrationDto>(staffJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            if (staffMember != null)
+                            {
+                                doctorDetails.Add(staffMember);
+                                Console.WriteLine($"Staff Data: {JsonSerializer.Serialize(doctorDetails)}");
+                            }
+                        }
+
+
+                    }
+
+                }
+            }
+        }
+
     }
 }
