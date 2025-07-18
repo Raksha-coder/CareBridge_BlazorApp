@@ -20,6 +20,7 @@ namespace App.Application.DTOs
         [MaxLength(100)]
         public string Reason { get; set; }
 
+        public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (StartTime == EndTime)

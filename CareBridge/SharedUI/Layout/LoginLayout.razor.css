@@ -9,7 +9,7 @@
 }
 
 .login-container {
-    max-width: 480px; /* Was 700px, now more compact */
+    max-width: 597px; /* Was 700px, now more compact */
     width: 100%;
     padding: 2rem; /* Slightly less padding for tighter UI */
     background-color: #ffffff;

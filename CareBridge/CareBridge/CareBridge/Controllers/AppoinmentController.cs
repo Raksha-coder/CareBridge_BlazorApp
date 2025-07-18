@@ -31,9 +31,23 @@ namespace CareBridge.Controllers
         }
 
         [HttpGet("[action]/{patientId}")]
-        public async Task<IActionResult> GetAppoinmentByPatientId(int patientId)
+        public async Task<IActionResult> GetPendingAppoinmenByPatientId(int patientId)
         {
-            var result = await _appoinmentService.GetAppoinmenByPatientIdAsync(patientId);
+            var result = await _appoinmentService.GetPendingAppoinmenByPatientIdAsync(patientId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetConfirmedAppoinmentByPatientId(int id)
+        {
+            var result = await _appoinmentService.GetConfirmedAppoinmenByPatientIdAsync(id);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetCancelledAppoinmentByPatientId(int id)
+        {
+            var result = await _appoinmentService.GetCancelledAppoinmenByPatientIdAsync(id);
             return Ok(result);
         }
 

@@ -3,6 +3,7 @@ using App.Application.Interfaces.DbContext;
 using App.Application.Interfaces.Repositories;
 using App.Application.Interfaces.Services;
 using App.Domain.Entities;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -57,20 +58,20 @@ namespace App.Infrastructure.Repositories
                 await _masterDbContext.Set<OrganizationRequest>().AddAsync(addorganization);
                 await _masterDbContext.SaveChangesAsync(cancellationToken: default);
                 _logger.LogInformation("Organization request submitted successfully.");
-                await _emailService.SendEmailAsync(organizationRequestDto.Email, "Organization Request", "Your organization request has been successfully submitted. We will get back to you soon.");
 
                 // Create new database for the organization
                 string orgDbName = organizationRequestDto.OrganizationName.Replace(" ", "_"); // Ensure valid DB name
                 string serverName = "SDN-116\\SQLEXPRESS"; // Set your server name
-                string connectionString = $"Server={serverName};Database={orgDbName};Trusted_Connection=True; TrustServerCertificate=True;";
+                string masterConnectionString = $"Server={serverName};Database=master;Trusted_Connection=True; TrustServerCertificate=True;";
 
-                using (var dbConnection = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
+                using (var dbConnection = new Microsoft.Data.SqlClient.SqlConnection(masterConnectionString))
                 {
                     await dbConnection.OpenAsync();
                     var createDbCmd = dbConnection.CreateCommand();
                     createDbCmd.CommandText = $"IF DB_ID('{orgDbName}') IS NULL CREATE DATABASE [{orgDbName}]";
                     await createDbCmd.ExecuteNonQueryAsync();
                 }
+                string orgDbConnectionString = $"Server={serverName};Database={orgDbName};Trusted_Connection=True; TrustServerCertificate=True;";
 
                 // Save OrganizationDatabaseDetailDto
                 var orgDbDetail = new OrganizationDatabaseDetailDto
@@ -78,9 +79,9 @@ namespace App.Infrastructure.Repositories
                     ServerName = serverName,
                     OrganizationId = addorganization.TenantID,
                     DatabaseName = orgDbName,
-                    ConnectionString = connectionString
+                    ConnectionString = orgDbConnectionString
                 };
-                await _masterDbContext.Set<OrganizationDatabaseDetailDto>().AddAsync(orgDbDetail);
+                await _masterDbContext.Set<OrganizationDatabaseDetail>().AddAsync(orgDbDetail.Adapt<OrganizationDatabaseDetail>());
                 await _masterDbContext.SaveChangesAsync();
                 _logger.LogInformation("Organization database created successfully.");
                 await _emailService.SendEmailAsync(organizationRequestDto.Email, "Organization Request", "Your organization request has been successfully submitted. We will get back to you soon.");
@@ -209,7 +210,7 @@ namespace App.Infrastructure.Repositories
                 {
                     return new JsonResponseDto(404, "Organization request not found.", null);
                 }
-                updateOrganizationRequest.IsActive = true;
+                updateOrganizationRequest.IsApproved = true;
                 _masterDbContext.Set<OrganizationRequest>().Update(updateOrganizationRequest);
                 await _masterDbContext.SaveChangesAsync(cancellationToken: default);
                 await _emailService.SendEmailAsync(updateOrganizationRequest.Email, "Database Allocation Successfully", "Your database has been allocated successfully");

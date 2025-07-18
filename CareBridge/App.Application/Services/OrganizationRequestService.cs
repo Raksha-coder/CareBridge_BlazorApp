@@ -24,7 +24,7 @@ namespace App.Application.Services
             {
                 return await _organizationRequestRepository.CreateOrganizationRequest(organizationRequestDto);
             }
-            catch (Exception ex)
+                catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }

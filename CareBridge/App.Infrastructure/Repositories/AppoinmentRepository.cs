@@ -51,17 +51,12 @@ namespace App.Infrastructure.Repositories
             }
 
         }
-        public async Task<JsonResponseDto> GetAppoinmenByPatientIdAsync(int patientId)
+        public async Task<JsonResponseDto> GetConfirmedAppoinmenByPatientIdAsync(int patientId)
         {
             try
             {
                 var getappoinmentByPatientId = await _context.Appoinment.Where(a => a.PatientId == patientId).ToListAsync();
 
-                if (getappoinmentByPatientId != null && getappoinmentByPatientId.Any(a => a.Status == AppointmentStatus.Pending))
-                {
-                    _logger.LogInformation("Retrived list of Pending Appoinments");
-                    return new JsonResponseDto(200, "Appoinment List", getappoinmentByPatientId);
-                }
                 if (getappoinmentByPatientId != null && getappoinmentByPatientId.Any(a => a.Status == AppointmentStatus.Confirmed))
                 {
                     _logger.LogInformation("Retrived list of Confirmed Appoinments");
@@ -86,7 +81,46 @@ namespace App.Infrastructure.Repositories
                 return new JsonResponseDto(500, "Internal Server Error", null);
             }
         }
+        public async Task<JsonResponseDto> GetPendingAppoinmenByPatientIdAsync(int patientId)
+        {
+            try
+            {
+                var getappoinmentByPatientId = await _context.Appoinment.Where(a => a.PatientId == patientId).ToListAsync();
 
+                if (getappoinmentByPatientId != null && getappoinmentByPatientId.Any(a => a.Status == AppointmentStatus.Pending))
+                {
+                    _logger.LogInformation("Retrived list of Pending Appoinments");
+                    return new JsonResponseDto(200, "Appoinment List", getappoinmentByPatientId);
+                }
+                _logger.LogWarning("No Appoinment Found for this Patient");
+                return new JsonResponseDto(404, "No Appoinment Found for this Patient", null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting appoinment by patient id.");
+                return new JsonResponseDto(500, "Internal Server Error", null);
+            }
+        }
+
+        public async Task<JsonResponseDto> GetCancelledAppoinmenByPatientIdAsync(int patientId)
+        {
+            try
+            {
+                var getappoinmentByPatientId = await _context.Appoinment.Where(a => a.PatientId == patientId).ToListAsync();
+                if (getappoinmentByPatientId != null && getappoinmentByPatientId.Any(a => a.Status == AppointmentStatus.Cancelled))
+                {
+                    _logger.LogInformation("Retrived list of Cancelled Appoinments");
+                    return new JsonResponseDto(200, "Appoinment List", getappoinmentByPatientId);
+                }
+                _logger.LogWarning("No Appoinment Found for this Patient");
+                return new JsonResponseDto(404, "No Appoinment Found for this Patient", null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting appoinment by patient id.");
+                return new JsonResponseDto(500, "Internal Server Error", null);
+            }
+        }
         public async Task<JsonResponseDto> GetAppoinmenByStaffIdAsync(int staffId)
         {
             try
@@ -147,6 +181,8 @@ namespace App.Infrastructure.Repositories
             }
 
         }
+
+
     }
 
 }

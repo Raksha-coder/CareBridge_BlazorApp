@@ -50,7 +50,36 @@ namespace App.Infrastructure.Repositories
                     _logger.LogError("Invalid username or password.");
                     return new JsonResponseDto(404, "Invalid username or password.", null);
                 }
-                return new JsonResponseDto(200, "Login Successfully", checkuser.Adapt<SuperAdminDto>());
+
+                var claim = new[]
+             {
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
+                new Claim("SuperAdminId", checkuser.Id.ToString()),
+                new Claim("Email", checkuser.Email),
+                new Claim(ClaimTypes.Role,"SuperAdmin")
+            };
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+                var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var token = new JwtSecurityToken(
+                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Audience"],
+                    claim,
+                    expires: DateTime.Now.AddMinutes(30),
+                    signingCredentials: signIn);
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+                string subject = "Your OTP Verification Code";
+                string body = $@"
+    <html>
+        <body>
+            <h2>Hello {checkuser.Email},</h2>
+            <p>Login Successfully.</p>
+            <br />
+            <p>Regards,<br/>Blazor Sample App Team</p>
+        </body>
+    </html>";
+                await _emailService.SendEmailAsync(checkuser.Email, subject, body);
+                _logger.LogInformation("OTP Sent Successfully.");
+                return new JsonResponseDto(200, "Login Successfully", jwt);
             }
             catch (Exception ex)
             {
@@ -101,5 +130,7 @@ namespace App.Infrastructure.Repositories
                 return new JsonResponseDto(500, "Internal Server Error", null);
             }
         }
+
+
     }
 }

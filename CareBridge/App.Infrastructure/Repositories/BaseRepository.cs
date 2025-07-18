@@ -14,7 +14,7 @@ namespace App.Infrastructure.Repositories
         private readonly string _connectionString;
         private readonly string _provider;
 
-        protected BaseRepository(DbContext context, IDbConnectionFactory dbConnectionFactory)
+        public BaseRepository(DbContext context, IDbConnectionFactory dbConnectionFactory)
         {
             _dbContext = context;
             _connectionString = context.Database.GetDbConnection().ConnectionString;

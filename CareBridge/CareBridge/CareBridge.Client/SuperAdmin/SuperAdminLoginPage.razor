@@ -1,4 +1,5 @@
 ﻿@page "/superadmin/superadminlogin"
+@using CareBridge.Client.Auth
 @layout LoginLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 <PageTitle>SuperAdminLogin</PageTitle>
@@ -75,6 +76,9 @@ else
     private HttpClient httpClient { get; set; }
 
     [Inject]
+    public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
+    [Inject]
     private IMatToaster MatToaster { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -98,8 +102,29 @@ else
 
             if (response.IsSuccessStatusCode)
             {
-                MatToaster.Add("Login successful", MatToastType.Success);
-                NavigationManager.NavigateTo($"/superadmin/verifysuperadmin/{loginDto.Email}");
+                jsonModel = await response.Content.ReadFromJsonAsync<JsonResponseDto>();
+
+                if (jsonModel != null && jsonModel.Data != null)
+                {
+                    // Parse the authentication response
+                    var dataString = jsonModel.Data.ToString() ?? "";
+
+                    string token = dataString;
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        MatToaster.Add("Login successful", MatToastType.Success);
+                        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(token);
+                        NavigationManager.NavigateTo($"/superadmin/superadmindashboard");
+                    }
+                    else
+                    {
+                        MatToaster.Add("Invalid token received", MatToastType.Danger);
+                    }
+                }
+                else
+                {
+                    MatToaster.Add("Invalid token received", MatToastType.Danger);
+                }
             }
             else
             {

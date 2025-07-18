@@ -1,10 +1,14 @@
 ﻿using App.Application.DTOs;
-using App.Application.Interfaces.Repositories;
 using App.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace App.Application.Interfaces.Services
+namespace App.Application.Interfaces.Repositories
 {
-    public interface IAppoinmentService
+    public interface IAppoinmentRes 
     {
         Task<JsonResponseDto> GetAppoinmenByStaffIdAsync(int staffId);
         Task<JsonResponseDto> GetConfirmedAppoinmenByPatientIdAsync(int patientId);

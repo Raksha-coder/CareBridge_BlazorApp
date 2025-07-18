@@ -1,4 +1,6 @@
 ﻿@page "/superadmin/superadmindashboard"
+@using System.IdentityModel.Tokens.Jwt
+@using System.Text.Json
 @layout MainLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
@@ -8,6 +10,7 @@
     <div class="mb-3">
         <MatButton Outlined="true" OnClick="@ShowRecentRequests">Recent Requests</MatButton>
         <MatButton Outlined="true" OnClick="@ShowAllocatedDatabases">Allocated Databases</MatButton>
+        <MatButton Outlined="true" OnClick="@CreateOrganizationRequest">Create Organization</MatButton>
     </div>
 
     @if (tasks != null)
@@ -61,6 +64,9 @@
 </div>
 
 @code {
+
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
     [Inject]
     NavigationManager Navigation { get; set; }
 
@@ -76,8 +82,24 @@
     private bool isUpdateDialogOpen = false;
     protected override async Task OnInitializedAsync()
     {
-        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/OrganizationRequest/GetAllOrganizationRequestHasApproved");
-        tasks = jsonResponseDto?.Data as List<OrganizationRequestDto>;
+        var token = await localStorageService.GetItemAsync<string>("authToken");
+        if (!string.IsNullOrEmpty(token))
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            // Access claims
+            var email = jwtToken.Claims.FirstOrDefault(c => c.Type == "Email")?.Value;
+        }
+
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/OrganizationRequest/GetAllOrganizationRequestHasNotApproved");
+        @if (jsonResponseDto != null && jsonResponseDto.Data != null)
+        {
+            var json = jsonResponseDto.Data.ToString();
+            tasks = JsonSerializer.Deserialize<List<OrganizationRequestDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            // Log the patient object as JSON
+            Console.WriteLine($"Patient Data: {JsonSerializer.Serialize(tasks)}");
+        }
+
     }
 
     private async Task UpdateById(int id)
@@ -100,6 +122,11 @@
     {
         deleteId = id;
         isDeleteDialogOpen = true;
+    }
+
+    private void CreateOrganizationRequest()
+    {
+        Navigation.NavigateTo("/superadmin/createorganization");
     }
 
     private async void DeleteConfirmed()

@@ -1,38 +1,43 @@
-﻿@page "/Appoinment/PatientTodayAppoinment"
+﻿@page "/Appoinment/PatientPreviousAppoinment"
 @using System.Text.Json
 @using System.IdentityModel.Tokens.Jwt
 @layout MainLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender:false))
+
 <div class="dashboard-container">
     <header class="page-header">
-        <h1>PatientTodayAppoinment</h1>
+        <h1>Patient Confirmed Appoinments</h1>
+        <div class="appointment-buttons">
+            <MatButton class="appointment-btn" Raised="true" Color="MatButtonColor.Primary" OnClick="@ShowPreviousAppointments">Previous Appointment</MatButton>
+            <MatButton class="appointment-btn" Raised="true" Color="MatButtonColor.Secondary" OnClick="@ShowUpcomingAppointments">Upcoming Appointment</MatButton>
+            <MatButton class="appointment-btn" Raised="true" Color="MatButtonColor.Info" OnClick="@ShowTodaysAppointments">Today's Appointment</MatButton>
+        </div>
     </header>
     @if (appoinments != null && appoinments.Any())
     {
-        <div class="doctor-grid">
+        <div class="doctor-grid-horizontal">
             @foreach (var doc in appoinments)
             {
                 <MatCard class="doctor-card">
                     <MatCardContent class="doctor-card-body">
                         <MatBody2 class="demo-mat-card-clean-margin">
-                            <p><strong>Email:</strong> @doc.Date</p>
-                            <p><strong>Email:</strong> @doc.StartTime</p>
-                            <p><strong>Email:</strong> @doc.EndTime</p>
+                            <p><strong>Appoinment Date :</strong> @doc.Date</p>
                             @foreach (var staff in doctorDetails)
                             {
-                                <p><strong>First Name  </strong> @staff.FirstName</p>
-                                <p><strong>Last Name  </strong> @staff.LastName</p>
+                                <p><strong>First Name  </strong> @staff.FirstName  <strong>Last Name  </strong> @staff.LastName</p>
                                 <p><strong>Designation </strong> @staff.Designation</p>
                                 <p><strong>Department  </strong> @staff.Department</p>
                                 <p><strong>Visiting Charge   </strong> @staff.VisitingCharge</p>
 
                             }
                             <p><strong>Gender:</strong> @doc.Reason</p>
-                            <p><strong>Address:</strong> @doc.Status</p>
                         </MatBody2>
                     </MatCardContent>
-                    <MatCardActions class="doctor-card-actions">
-                    </MatCardActions>
+                    <div class="card-footer">
+                        <span><strong>Start:</strong> @doc.StartTime</span>
+                        <span><strong>End:</strong> @doc.EndTime</span>
+                        <span><strong>Status:</strong> @doc.Status</span>
+                    </div>
                 </MatCard>
             }
         </div>
@@ -42,27 +47,22 @@
         <h2 class="no-doctors">No Doctors Found</h2>
     }
 </div>
-
 @code {
     [Inject]
     private NavigationManager? NavigationManager { get; set; }
-
     [Inject]
     ILocalStorageService localStorageService { get; set; }
+
     private List<Appoinment> appoinments = new List<Appoinment>();
 
     [Inject]
     private HttpClient Http { get; set; }
-
     [Parameter]
     public int PatientId { get; set; }
 
     private int roleId = 0;
-    // private List<StaffRegistrationDto> staff = new List<StaffRegistrationDto>();
-
-    private JsonResponseDto? jsonResponseDto;
-
     private List<StaffRegistrationDto> doctorDetails = new List<StaffRegistrationDto>();
+    private JsonResponseDto? jsonResponseDto;
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,8 +77,7 @@
             roleId = Convert.ToInt32(roleid);
             if (roleId == 3)
             {
-                jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>($"api/Appoinment/GetAppoinmentByPatientId/{PatientId}");
-
+                jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>($"api/Appoinment/GetConfirmedAppoinmentByPatientId/{PatientId}");
                 @if (jsonResponseDto != null && jsonResponseDto.Data != null)
                 {
                     var json = jsonResponseDto.Data.ToString();
@@ -101,13 +100,24 @@
                                 Console.WriteLine($"Staff Data: {JsonSerializer.Serialize(doctorDetails)}");
                             }
                         }
-
-
                     }
-
                 }
             }
         }
+    }
 
+    private void ShowPreviousAppointments()
+    {
+        NavigationManager.NavigateTo("/Appoinment/PatientPreviousAppoinment");
+    }
+
+    private void ShowUpcomingAppointments()
+    {
+        NavigationManager.NavigateTo("/Appoinment/PatientUpcomingAppoinment");
+    }
+
+    private void ShowTodaysAppointments()
+    {
+        NavigationManager.NavigateTo("/Appoinment/PatientTodayAppoinment");
     }
 }

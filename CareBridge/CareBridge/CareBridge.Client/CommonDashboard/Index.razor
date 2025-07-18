@@ -4,15 +4,22 @@
 
 <h3>Welcome to CareBridge </h3>
 
-<MatButton Raised="true" OnClick="@GoToPatient" Style="margin-right: 10px;">
-    Go to Patient
-</MatButton>
+<div class="row">
+    <div class="col-4">
+        <MatButton Raised="true" OnClick="@GoToPatient" Style="margin-right: 10px;">
+            Go to Patient
+        </MatButton>
+    </div>
+    <div class="col-4">
 
-<MatButton Raised="true" OnClick="@GoToStaff">
-    Go to Staff
-</MatButton>
-
-<MatButton Raised="true" OnClick="@GoToSuperAdmin" Style="margin-right: 10px;"></MatButton>
+        <MatButton Raised="true" OnClick="@GoToStaff">
+            Go to Staff
+        </MatButton>
+    </div>
+    <div class="col-4">
+        <MatButton Raised="true" OnClick="@GoToSuperAdmin" Style="margin-right: 10px;">Super Admin </MatButton>
+    </div>
+</div>
 
 
 @code {
@@ -34,4 +41,4 @@
     {
         Navigation.NavigateTo("/superadmin/superadminlogin");
     }
-    }
+}

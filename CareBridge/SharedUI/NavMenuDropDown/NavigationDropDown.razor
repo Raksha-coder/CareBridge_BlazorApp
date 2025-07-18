@@ -10,7 +10,9 @@
 
 
 
-<MatButton Label="Menu" RefBack="@buttonForwardRef" OnClick="@OnClick"></MatButton>
+<MatButton Label="Menu" RefBack="@buttonForwardRef"
+           @onmouseover="OnMouseOver"
+           @onmouseout="OnMouseOut"></MatButton>
 <MatMenu @ref="menuRef" TargetForwardRef="@buttonForwardRef">
     <MatList>
         <MatListItem OnClick="@OnProfileClick">Profile</MatListItem>
@@ -42,17 +44,28 @@
             var email = jwtToken.Claims.FirstOrDefault(c => c.Type == "Email")?.Value;
             var Username = jwtToken.Claims.FirstOrDefault(c => c.Type == "Username")?.Value;
             var roleid = jwtToken.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+            var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")?.Value;
             roleId = Convert.ToInt32(roleid);
-            if (roleId == 1)
+
+            if (role == "SuperAdmin")
             {
-                var staffId = jwtToken.Claims.FirstOrDefault(c => c.Type == "StaffId")?.Value;
-                Id = Convert.ToInt32(staffId);
+                var superAdminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "SuperAdminId")?.Value;
+                Id = Convert.ToInt32(superAdminId);
             }
             else
-            if (roleId == 3)
             {
-                var patientId = jwtToken.Claims.FirstOrDefault(c => c.Type == "PatientId")?.Value;
-                Id = Convert.ToInt32(patientId);
+                if (roleId == 1)
+                {
+                    var staffId = jwtToken.Claims.FirstOrDefault(c => c.Type == "StaffId")?.Value;
+                    Id = Convert.ToInt32(staffId);
+                }
+                else
+               if (roleId == 3)
+                {
+                    var patientId = jwtToken.Claims.FirstOrDefault(c => c.Type == "PatientId")?.Value;
+                    Id = Convert.ToInt32(patientId);
+                }
+
             }
 
         }
@@ -91,20 +104,22 @@
     }
 
 
-    public async Task OnClick(MouseEventArgs e)
+    private async Task OnMouseOver(MouseEventArgs e)
     {
         if (menuRef != null)
         {
-            try
-            {
-                await menuRef.OpenAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Menu open error: {ex.Message}");
-            }
+            await menuRef.OpenAsync();
         }
     }
+
+    private async Task OnMouseOut(MouseEventArgs e)
+    {
+        if (menuRef != null)
+        {
+            await menuRef.CloseAsync();
+        }
+    }
+
 
     public void Dispose()
     {
@@ -113,4 +128,3 @@
     }
 
 }
-l

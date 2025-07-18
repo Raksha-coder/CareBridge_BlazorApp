@@ -28,11 +28,12 @@ namespace App.Infrastructure
             services.AddScoped<IStateRepository, StateRepository>();
             services.AddScoped<IStateService, StateService>();
             services.AddScoped<ISuperAdminRepository, SuperAdminRepository>();
-            services.AddScoped<ISuperAdminService, Application.Interfaces.Services.SuperAdminService>();
+            services.AddScoped<ISuperAdminService, SuperAdminService>();
             services.AddScoped<IOrganizationRequestRepository, OrganizationRequestRepository>();
             services.AddScoped<IOrganizationRequestService, OrganizationRequestService>();
             services.AddScoped<IAppoinmentRepository, AppoinmentRepository>();
             services.AddScoped<IAppoinmentService, AppoinmentService>();
+            services.AddScoped<IGenericRepository<AppDbContext>, GenericRepository<AppDbContext>>();
             services.AddScoped<IMasterDbContext, MasterDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
             services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();

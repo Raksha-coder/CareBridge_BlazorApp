@@ -1,0 +1,149 @@
+﻿@page "/superadmin/createorganization"
+@using System.IdentityModel.Tokens.Jwt
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+<PageTitle>Create Organization</PageTitle>
+<h1>Register New Organization</h1>
+<EditForm Model="@registerDto" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="row mt-3">
+        <div class="col-12">
+            <MatTextField @bind-Value="@registerDto.OrganizationName" Outlined="true" Label="Enter Organization Name"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.OrganizationName)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Email" Outlined="true" Label="Enter Email"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Email)" />
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Phone" Outlined="true" MaxLength="12" Label="Enter Mobile"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Phone)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Description" Outlined="true" Label="Enter Gender"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Description)" />
+        </div>
+        <div class="col-6">
+            @if (Countries != null && Countries.Any())
+            {
+                <MatSelect @bind-Value="@registerDto.CountryID" Label="Country" Outlined="true">
+                    @foreach (var item in Countries)
+                    {
+                        <MatOption Value="@item.CountryId"> @item.Name</MatOption>
+                    }
+                </MatSelect>
+                <ValidationMessage For="@(() => registerDto.CountryID)" />
+            }
+            else
+            {
+                <p>Loading Country...</p>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            @if (States != null)
+            {
+                <MatSelect @bind-Value="@registerDto.StateID" Label="State" Outlined="true">
+                    @foreach (var item in States)
+                    {
+                        <MatOption Value="@item.StateId">@item.StateName</MatOption>
+                    }
+                </MatSelect>
+                <ValidationMessage For="@(() => registerDto.StateID)" />
+            }
+            else
+            {
+                <p>Loading states...</p>
+            }
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.City" Outlined="true" Label="Enter  City"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.City)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Zip" Outlined="true" Label="Enter PinCode"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Zip)" />
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Address1" Outlined="true" Label="Enter Address Line 1"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Address1)" />
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.Address2" Outlined="true" Label="Enter Address Line 2"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.Address2)" />
+        </div>
+        <div class="col-6">
+            <MatTextField @bind-Value="@registerDto.ApartmentNumber" Outlined="true" Label="Enter Apartment Number"></MatTextField>
+            <ValidationMessage For="@(() => registerDto.ApartmentNumber)" />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <MatButton Type="submit" Raised="true">
+                <div class="top-progress-bar">
+                    <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
+                </div>
+            </MatButton>
+        </div>
+    </div>
+    <ValidationSummary />
+    <MatToastContainer />
+</EditForm>
+@code {
+    [Inject]
+    ILocalStorageService localStorageService { get; set; }
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    [Inject]
+    private IMatToaster Toaster { get; set; }
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    private JsonResponseDto jsonResponseDto { get; set; }
+    private OrganizationRequestDto registerDto = new OrganizationRequestDto();
+    private List<Country> Countries { get; set; }
+
+    private List<State> States { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Countries = (await Http.GetFromJsonAsync<List<Country>>("api/Country/GetAllCountries"))
+      ?.Where(c => c != null && c.CountryId != null && !string.IsNullOrWhiteSpace(c.Name)).ToList();
+
+        States = (await Http.GetFromJsonAsync<List<State>>("api/State/GetAllStates"))
+            ?.Where(s => s != null && s.StateId != null && !string.IsNullOrWhiteSpace(s.StateName)).ToList();
+
+        Console.WriteLine($"Get All {Countries}");
+        Console.WriteLine($"Get All {States}");
+    }
+    private async Task HandleValidSubmit()
+    {
+
+        var response = await Http.PostAsJsonAsync("api/OrganizationRequest/CreateOrganizationRequest", registerDto);
+        if (response.IsSuccessStatusCode)
+        {
+            Toaster.Add("Registration successful!", MatToastType.Success);
+            Navigation.NavigateTo("/superadmin/superadmindashboard");
+        }
+        else
+        {
+            Toaster.Add("Registration failed. Please try again.", MatToastType.Danger);
+        }
+    }
+}
