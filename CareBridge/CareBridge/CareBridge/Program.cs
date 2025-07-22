@@ -3,6 +3,7 @@ using App.Infrastructure;
 using Blazored.LocalStorage;
 using CareBridge.Auth;
 using CareBridge.Client.Auth;
+using CurrieTechnologies.Razor.SweetAlert2;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -21,9 +22,9 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-
+// Added MatBlazor Service 
 builder.Services.AddMatBlazor();
-
+// Added MatBlazor Toaster Service
 builder.Services.AddMatToaster(config =>
 {
     config.Position = MatToastPosition.TopRight;
@@ -34,6 +35,11 @@ builder.Services.AddMatToaster(config =>
     config.VisibleStateDuration = 3000;
 });
 
+// Add CurrieTechnologies.Blazor.SweetAlert2 Service
+builder.Services.AddSweetAlert2(options =>
+{
+    options.Theme = SweetAlertTheme.Dark;
+});
 
 // Add JWT handler
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -1,0 +1,22 @@
+﻿@page "/SuperAdmin/UpdateOrganizationStatus/{id}"
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+<PageTitle>UpdateOrganizationStatus</PageTitle>
+
+
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    private JsonResponseDto jsonResponseDto { get; set; }
+    [Inject]
+    private HttpClient Http { get; set; }
+    private OrganizationRequestDto selectedTask = new OrganizationRequestDto();
+
+    protected async override Task OnInitializedAsync()
+    {
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>($"api/OrganizationRequest/GetOrganizationDetailsByTenantId/{id}");
+        selectedTask = jsonResponseDto?.Data as OrganizationRequestDto;
+    }
+
+}

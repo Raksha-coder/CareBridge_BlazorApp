@@ -24,7 +24,7 @@ namespace App.Application.Services
             {
                 return await _organizationRequestRepository.CreateOrganizationRequest(organizationRequestDto);
             }
-                catch (Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -66,11 +66,23 @@ namespace App.Application.Services
             }
         }
 
-        public async Task<JsonResponseDto> GetOrganizationDatabaseDetailsByTenantId(int tenantId)
+        public async Task<JsonResponseDto> GetDatabaseDetailsByTenantId(int tenantId)
         {
             try
             {
-                return await _organizationRequestRepository.GetOrganizationDatabaseDetailsByTenantId(tenantId);
+                return await _organizationRequestRepository.GetDatabaseDetailsByTenantId(tenantId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<JsonResponseDto> GetOrganizationDetailsByTenantId(int tenantId)
+        {
+            try
+            {
+                return await _organizationRequestRepository.GetOrganizationDetailsByTenantId(tenantId);
             }
             catch (Exception ex)
             {

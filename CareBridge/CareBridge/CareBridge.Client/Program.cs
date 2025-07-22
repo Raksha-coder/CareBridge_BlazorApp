@@ -1,6 +1,7 @@
 using App.Application.Services;
 using Blazored.LocalStorage;
 using CareBridge.Client.Auth;
+using CurrieTechnologies.Razor.SweetAlert2;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -26,6 +27,13 @@ builder.Services.AddScoped(sp =>
 });
 
 builder.Services.AddMatBlazor();
+
+// Add CurrieTechnologies.Blazor.SweetAlert2 Service
+builder.Services.AddSweetAlert2(options =>
+{
+    options.Theme = SweetAlertTheme.Dark;
+});
+
 // Blazored LocalStorage
 builder.Services.AddBlazoredLocalStorage();
 

@@ -1,0 +1,129 @@
+﻿@page "/superadmin/allocateddatabases"
+@using System.Text.Json
+@layout MainLayout
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+<PageTitle>AllocatedDatabases</PageTitle>
+<div class="container">
+    <div class="mb-3">
+        <MatButton Outlined="true" OnClick="@ShowRecentRequests">Recent Requests</MatButton>
+        <MatButton Outlined="true" OnClick="@ShowAllocatedDatabases">Allocated Databases</MatButton>
+    </div>
+
+    @if (tasks != null)
+    {
+        <MatTable Items="tasks" class="mat-elevation-z5" AllowSelection="true">
+            <MatTableHeader>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.TenantID</td>
+                <td>@context.OrganizationName</td>
+                <td>@context.Description</td>
+                <td>
+                    <MatButton Outlined="true" Class="mat-primary"> Approved <MatIcon Icon="check_circle"></MatIcon> </MatButton>
+                    <MatButton OnClick="@(() => InfoByIdAsync(context.TenantID))" Outlined="true" Class="mat-primary">  <MatIcon Icon="info"></MatIcon> </MatButton>
+                </td>
+            </MatTableRow>
+        </MatTable>
+
+        <MatDialog @bind-IsOpen="isInformationDialogOpen">
+            <MatDialogTitle>Confirm Delete</MatDialogTitle>
+            <MatDialogContent>
+                <MatTextField Label="Organization Name" ReadOnly="true" @bind-Value="@organizationRequest.OrganizationName"></MatTextField>
+                <MatTextField Label="Email" ReadOnly="true" @bind-Value="@organizationRequest.Email"></MatTextField>
+                <MatTextField Label="Description" ReadOnly="true" @bind-Value="@organizationRequest.Description"></MatTextField>
+                <MatTextField Label="City" ReadOnly="true" @bind-Value="@organizationRequest.City"></MatTextField>
+                <MatTextField Label="Addess Line 1" ReadOnly="true" @bind-Value="@organizationRequest.Address1"></MatTextField>
+                <MatTextField Label="Addess Line 2" ReadOnly="true" @bind-Value="@organizationRequest.Address2"></MatTextField>
+                <MatTextField Label="Database Name" ReadOnly="true" @bind-Value="@organizationDatabaseDetail.DatabaseName"></MatTextField>
+                <MatTextField Label="Connection String" ReadOnly="true" @bind-Value="@organizationDatabaseDetail.ConnectionString"></MatTextField>
+                <MatTextField Label="Status" ReadOnly="true" @bind-Value="@organizationRequest.IsApproved"></MatTextField>
+            </MatDialogContent>
+
+            <MatDialogActions>
+                <MatButton OnClick="CancelInfo">No</MatButton>
+            </MatDialogActions>
+        </MatDialog>
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+
+
+</div>
+@code {
+    [Inject]
+    NavigationManager Navigation { get; set; }
+
+    [Inject]
+    private HttpClient Http { get; set; }
+
+    private JsonResponseDto getOrnizationDeatils { get; set; }
+    private JsonResponseDto getDatabaseDetails { get; set; }
+    private JsonResponseDto jsonResponseDto { get; set; }
+
+    private List<OrganizationRequestDto> tasks;
+    private OrganizationRequest organizationRequest = new OrganizationRequest();
+    private OrganizationDatabaseDetail organizationDatabaseDetail = new OrganizationDatabaseDetail();
+    private bool isInformationDialogOpen = false;
+    private int tennatId;
+    protected override async Task OnInitializedAsync()
+    {
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/OrganizationRequest/GetAllOrganizationRequestHasApproved");
+        @if (jsonResponseDto != null && jsonResponseDto.Data != null)
+        {
+            var json = jsonResponseDto.Data.ToString();
+            tasks = JsonSerializer.Deserialize<List<OrganizationRequestDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            // Log the patient object as JSON
+            Console.WriteLine($"Patient Data: {JsonSerializer.Serialize(tasks)}");
+        }
+    }
+
+    private async Task InfoByIdAsync(int id)
+    {
+        tennatId = id;
+        isInformationDialogOpen = true;
+
+        getOrnizationDeatils = await Http.GetFromJsonAsync<JsonResponseDto>($"api/OrganizationRequest/GetOrganizationDetailsByTenantId/{tennatId}");
+
+        if (getDatabaseDetails.Data != null && getOrnizationDeatils != null)
+        {
+            var json = getDatabaseDetails.Data.ToString();
+            organizationRequest = JsonSerializer.Deserialize<OrganizationRequest>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
+        getDatabaseDetails = await Http.GetFromJsonAsync<JsonResponseDto>($"api/OrganizationRequest/GetDatabaseDetailsByTenantId/{tennatId}");
+
+        if (getDatabaseDetails != null && getDatabaseDetails.Data != null)
+        {
+            var json = getDatabaseDetails.Data?.ToString();
+            if (json != null)
+            {
+                organizationDatabaseDetail = JsonSerializer.Deserialize<OrganizationDatabaseDetail>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+        }
+    }
+
+    private void DeleteById(int id)
+    {
+        // TODO: Implement delete logic (e.g., call API to delete and refresh list)
+    }
+    private void ShowRecentRequests()
+    {
+        Navigation.NavigateTo("/superadmin/superadmindashboard");
+    }
+
+    private void ShowAllocatedDatabases()
+    {
+        Navigation.NavigateTo("/superadmin/allocateddatabases");
+    }
+
+    private void CancelInfo()
+    {
+        isInformationDialogOpen = false;
+    }
+}

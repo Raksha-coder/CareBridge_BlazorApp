@@ -15,7 +15,9 @@ namespace App.Application.Interfaces.Services
         Task<JsonResponseDto> GetAllOrganizationRequestHasNotApproved();
         Task<JsonResponseDto> UpdateOrganizationRequest(int tennatid);
         Task<JsonResponseDto> DeleteOrganizationRequest(int id);
-        Task<JsonResponseDto> GetOrganizationDatabaseDetailsByTenantId(int tenantId);
+        Task<JsonResponseDto> GetOrganizationDetailsByTenantId(int tenantId);
+        Task<JsonResponseDto> GetDatabaseDetailsByTenantId(int tenantId);
+
 
     }
 }

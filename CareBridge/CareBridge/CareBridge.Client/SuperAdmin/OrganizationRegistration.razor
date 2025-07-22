@@ -4,6 +4,11 @@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
 <PageTitle>Create Organization</PageTitle>
+<div class="d-flex align-items-center mb-3">
+    <MatButton Outlined="true" OnClick="@GoBack" Icon="arrow_back" Class="mat-primary">Back</MatButton>
+</div>
+
+
 <h1>Register New Organization</h1>
 <EditForm Model="@registerDto" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
@@ -95,9 +100,7 @@
     <div class="row mt-3">
         <div class="col-6">
             <MatButton Type="submit" Raised="true">
-                <div class="top-progress-bar">
-                    <MatProgressBar Indeterminate="true" Color="MatThemeColor.Primary" />
-                </div>
+                Submit
             </MatButton>
         </div>
     </div>
@@ -145,5 +148,10 @@
         {
             Toaster.Add("Registration failed. Please try again.", MatToastType.Danger);
         }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/superadmin/superadmindashboard");
     }
 }

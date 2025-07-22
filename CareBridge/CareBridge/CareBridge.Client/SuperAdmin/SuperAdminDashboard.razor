@@ -3,7 +3,7 @@
 @using System.Text.Json
 @layout MainLayout
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
-
+@inject SweetAlertService Swal
 <PageTitle>SuperAdminDashboard</PageTitle>
 
 <div class="container">
@@ -11,6 +11,8 @@
         <MatButton Outlined="true" OnClick="@ShowRecentRequests">Recent Requests</MatButton>
         <MatButton Outlined="true" OnClick="@ShowAllocatedDatabases">Allocated Databases</MatButton>
         <MatButton Outlined="true" OnClick="@CreateOrganizationRequest">Create Organization</MatButton>
+        <MatButton Outlined="true" OnClick="@onAlert">Alert</MatButton>
+
     </div>
 
     @if (tasks != null)
@@ -46,12 +48,13 @@
 
         <MatDialog @bind-IsOpen="isUpdateDialogOpen">
             <MatDialogContent>
-                <MatTextField Label="Id" @bind-Value="selectedTask.TenantID" Disabled="true" />
-                <MatTextField Label="Name" @bind-Value="selectedTask.OrganizationName" />
-                <MatTextField Label="Description" @bind-Value="selectedTask.Description" />
+                <MatTextField Label="Id" @bind-Value="selectedTask.Email" Disabled="true" />
+                <MatTextField Label="Name" @bind-Value="selectedTask.OrganizationName" Disabled="true" />
+                <MatTextField Label="Description" @bind-Value="selectedTask.Description" Disabled="true" />
             </MatDialogContent>
             <MatDialogActions>
-                <MatButton OnClick="UpdateConfirmed" Class="mat-primary">Yes</MatButton>
+                <MatButton OnClick="@(() => UpdateConfirmed(selectedTask.TenantID))" Class="mat-primary">Yes</MatButton>
+                <MatButton OnClick="CancelUpdate">No</MatButton>
             </MatDialogActions>
         </MatDialog>
     }
@@ -70,15 +73,20 @@
     [Inject]
     NavigationManager Navigation { get; set; }
 
+
     [Inject]
     private HttpClient Http { get; set; }
 
-    private JsonResponseDto jsonResponseDto { get; set; }
+
+    private JsonResponseDto jsonResponseDto
+    { get; set; }
     private OrganizationRequestDto selectedTask = new OrganizationRequestDto();
 
+    private OrganizationRequest organizationDatabaseresponse = new OrganizationRequest();
     private List<OrganizationRequestDto> tasks;
     private bool isDeleteDialogOpen = false;
     private int deleteId;
+    private int tennatId;
     private bool isUpdateDialogOpen = false;
     protected override async Task OnInitializedAsync()
     {
@@ -104,9 +112,16 @@
 
     private async Task UpdateById(int id)
     {
-        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>($"api/OrganizationRequest/GetOrganizationRequestById/{id}");
-        selectedTask = jsonResponseDto?.Data as OrganizationRequestDto;
         isUpdateDialogOpen = true;
+        tennatId = id;
+        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>($"api/OrganizationRequest/GetOrganizationDetailsByTenantId/{tennatId}");
+        @if (jsonResponseDto != null && jsonResponseDto.Data != null)
+        {
+            var json = jsonResponseDto.Data.ToString();
+            selectedTask = JsonSerializer.Deserialize<OrganizationRequestDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            // Log the patient object as JSON
+            Console.WriteLine($"Patient Data Get By Id: {JsonSerializer.Serialize(selectedTask)}");
+        }
     }
 
     private void ShowRecentRequests()
@@ -116,7 +131,7 @@
 
     private void ShowAllocatedDatabases()
     {
-        Navigation.NavigateTo("/superadmin/superadmindashboard");
+        Navigation.NavigateTo("/superadmin/allocateddatabases");
     }
     private void ConfirmDelete(int id)
     {
@@ -139,18 +154,35 @@
         tasks = jsonResponseDto?.Data as List<OrganizationRequestDto>;
         StateHasChanged();
     }
-    private async void UpdateConfirmed()
+    private async void UpdateConfirmed(int tennatId)
     {
         isUpdateDialogOpen = false;
         // Call your API to update
-        await Http.PutAsJsonAsync($"api/OrganizationRequest/UpdateOrganizationRequest/{selectedTask.TenantID}", selectedTask);
+        await Http.PostAsJsonAsync($"api/OrganizationRequest/UpdateOrganizationRequest/{tennatId}", selectedTask);
         // Refresh the list
-        jsonResponseDto = await Http.GetFromJsonAsync<JsonResponseDto>("api/OrganizationRequest/GetAllOrganizationRequestHasApproved");
-        tasks = jsonResponseDto?.Data as List<OrganizationRequestDto>;
+        jsonResponseDto = await Http.GetFromJsonAsync
+        <JsonResponseDto>
+            ("api/OrganizationRequest/GetAllOrganizationRequestHasApproved");
+        tasks = jsonResponseDto?.Data as List<OrganizationRequestDto>
+            ;
         StateHasChanged();
     }
+
+
     private void CancelDelete()
     {
         isDeleteDialogOpen = false;
     }
+
+    private void CancelUpdate()
+    {
+        isUpdateDialogOpen = false;
+    }
+
+
+    private async void onAlert()
+    {
+        await Swal.FireAsync("Hello World");
+    }
+
 }

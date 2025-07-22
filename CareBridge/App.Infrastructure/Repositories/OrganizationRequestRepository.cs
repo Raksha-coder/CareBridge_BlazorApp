@@ -3,6 +3,7 @@ using App.Application.Interfaces.DbContext;
 using App.Application.Interfaces.Repositories;
 using App.Application.Interfaces.Services;
 using App.Domain.Entities;
+using App.Infrastructure.DBContext;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -54,6 +55,8 @@ namespace App.Infrastructure.Repositories
                     IsActive = true,
                     IsDeleted = false,
                     IsApproved = false,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = "SuperAdmin"
                 };
                 await _masterDbContext.Set<OrganizationRequest>().AddAsync(addorganization);
                 await _masterDbContext.SaveChangesAsync(cancellationToken: default);
@@ -100,7 +103,7 @@ namespace App.Infrastructure.Repositories
         {
             try
             {
-                var deleteOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.TenantID == id);
+                var deleteOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.TenantID == id && x.IsDeleted == false && x.IsActive == true).FirstOrDefaultAsync();
                 if (deleteOrganizationRequest == null)
                 {
                     return new JsonResponseDto(404, "Organization request not found.", null);
@@ -124,7 +127,10 @@ namespace App.Infrastructure.Repositories
                     // Remove OrganizationDatabaseDetail entity
                     _masterDbContext.Set<OrganizationDatabaseDetail>().Remove(orgDbDetail);
                 }
-                _masterDbContext.Set<OrganizationRequest>().Remove(deleteOrganizationRequest);
+                //_masterDbContext.Set<OrganizationRequest>().Remove(deleteOrganizationRequest);
+                deleteOrganizationRequest.IsDeleted = true;
+                deleteOrganizationRequest.ModifiedBy = "Super Admin";
+                deleteOrganizationRequest.ModifiedDate = DateTime.Now;
                 await _masterDbContext.SaveChangesAsync();
                 await _emailService.SendEmailAsync(deleteOrganizationRequest.Email, "Your Request Has Been Deleted", "Your Organization Request Has Been Deleted.");
                 _logger.LogInformation($"Organization request with ID {id} has been deleted successfully.");
@@ -140,7 +146,7 @@ namespace App.Infrastructure.Repositories
         {
             try
             {
-                var getAllOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.IsApproved == true).ToListAsync();
+                var getAllOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.IsApproved == true && x.IsDeleted == false && x.IsActive == true).ToListAsync();
                 if (getAllOrganizationRequest == null || !getAllOrganizationRequest.Any())
                 {
                     return new JsonResponseDto(404, "No organization requests found.", null);
@@ -158,7 +164,7 @@ namespace App.Infrastructure.Repositories
         {
             try
             {
-                var getAllOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.IsApproved == false).ToListAsync();
+                var getAllOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.IsApproved == false && x.IsDeleted == false && x.IsActive == true).ToListAsync();
                 if (getAllOrganizationRequest == null || !getAllOrganizationRequest.Any())
                 {
                     return new JsonResponseDto(404, "No organization requests found.", null);
@@ -172,16 +178,34 @@ namespace App.Infrastructure.Repositories
             }
         }
 
-        public async Task<JsonResponseDto> GetOrganizationDatabaseDetailsByTenantId(int tenantId)
+        public async Task<JsonResponseDto> GetDatabaseDetailsByTenantId(int tenantId)
         {
             try
             {
-                var organizationDatabaseDetails = await _masterDbContext.Set<OrganizationDatabaseDetail>().FirstOrDefaultAsync(x => x.OrganizationId == tenantId);
+                var organizationDatabaseDetails = await _masterDbContext.Set<OrganizationDatabaseDetail>().Where(x => x.OrganizationId == tenantId && x.IsDeleted == false && x.IsActive == true).FirstOrDefaultAsync();
                 if (organizationDatabaseDetails == null)
                 {
                     return new JsonResponseDto(404, "Organization database details not found.", null);
                 }
                 return new JsonResponseDto(200, "Organization database details fetched successfully.", organizationDatabaseDetails);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetOrganizationDatabaseDetailsByTenantId");
+                throw new Exception("An error occurred while fetching organization database details.");
+            }
+        }
+
+        public async Task<JsonResponseDto> GetOrganizationDetailsByTenantId(int tenantId)
+        {
+            try
+            {
+                var organizationDetails = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.TenantID == tenantId && x.IsDeleted == false && x.IsActive == true).FirstOrDefaultAsync();
+                if (organizationDetails == null)
+                {
+                    return new JsonResponseDto(404, "Organization database details not found.", null);
+                }
+                return new JsonResponseDto(200, "Organization database details fetched successfully.", organizationDetails);
 
             }
             catch (Exception ex)
@@ -193,7 +217,7 @@ namespace App.Infrastructure.Repositories
 
         public async Task<JsonResponseDto> GetOrganizationRequestById(int id)
         {
-            var getOrganizationRequestById = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.TenantID == id);
+            var getOrganizationRequestById = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.TenantID == id && x.IsDeleted == false && x.IsActive == true).FirstOrDefaultAsync();
             if (getOrganizationRequestById == null)
             {
                 return new JsonResponseDto(404, "Organization request not found.", null);
@@ -205,14 +229,30 @@ namespace App.Infrastructure.Repositories
         {
             try
             {
-                var updateOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().FirstOrDefaultAsync(x => x.Id == tennatid);
+                var updateOrganizationRequest = await _masterDbContext.Set<OrganizationRequest>().Where(x => x.TenantID == tennatid && x.IsDeleted == false && x.IsActive == true).FirstOrDefaultAsync();
                 if (updateOrganizationRequest == null)
                 {
                     return new JsonResponseDto(404, "Organization request not found.", null);
                 }
                 updateOrganizationRequest.IsApproved = true;
+                updateOrganizationRequest.ModifiedBy = "Super Admin";
+                updateOrganizationRequest.ModifiedDate = DateTime.Now;
                 _masterDbContext.Set<OrganizationRequest>().Update(updateOrganizationRequest);
                 await _masterDbContext.SaveChangesAsync(cancellationToken: default);
+                // Get the organization's database connection string
+                var orgDbDetail = await _masterDbContext.Set<OrganizationDatabaseDetail>()
+                    .FirstOrDefaultAsync(x => x.OrganizationId == updateOrganizationRequest.TenantID);
+
+                if (orgDbDetail != null)
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+                    optionsBuilder.UseSqlServer(orgDbDetail.ConnectionString);
+
+                    using (var orgContext = new AppDbContext(optionsBuilder.Options))
+                    {
+                        orgContext.Database.Migrate(); // This will create all tables as per your model
+                    }
+                }
                 await _emailService.SendEmailAsync(updateOrganizationRequest.Email, "Database Allocation Successfully", "Your database has been allocated successfully");
                 return (new JsonResponseDto(200, "Organization request updated successfully.", updateOrganizationRequest));
             }

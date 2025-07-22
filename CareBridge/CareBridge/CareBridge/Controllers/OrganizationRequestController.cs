@@ -43,23 +43,30 @@ namespace CareBridge.Controllers
             return Ok(result);
         }
 
-        [HttpPost("UpdateOrganizationRequest")]
+        [HttpPost("[action]/{tenantId}")]
         public async Task<IActionResult> UpdateOrganizationRequest(int tenantId)
         {
             var result = await _organizationRequestService.UpdateOrganizationRequest(tenantId);
             return Ok(result);
         }
-        [HttpDelete("DeleteOrganizationRequest/{id}")]
+        [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteOrganizationRequest(int id)
         {
             var result = await _organizationRequestService.DeleteOrganizationRequest(id);
             return Ok(result);
         }
 
-        [HttpGet("GetOrganizationDatabaseDetailsByTenantId/{tenantId}")]
-        public async Task<IActionResult> GetOrganizationDatabaseDetailsByTenantId(int tenantId)
+        [HttpGet("[action]/{tenantId}")]
+        public async Task<IActionResult> GetOrganizationDetailsByTenantId(int tenantId)
         {
-            var result = await _organizationRequestService.GetOrganizationDatabaseDetailsByTenantId(tenantId);
+            var result = await _organizationRequestService.GetOrganizationDetailsByTenantId(tenantId);
+            return Ok(result);
+        }
+
+        [HttpGet("[action]/{tenantId}")]
+        public async Task<IActionResult> GetDatabaseDetailsByTenantId(int tenantId)
+        {
+            var result = await _organizationRequestService.GetDatabaseDetailsByTenantId(tenantId);
             return Ok(result);
         }
 
